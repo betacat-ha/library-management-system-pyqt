@@ -70,7 +70,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
-             <widget class="LineEdit" name="bookTitle"/>
+             <widget class="LineEdit" name="adminId"/>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5"/>

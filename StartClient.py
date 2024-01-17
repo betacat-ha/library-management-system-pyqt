@@ -2,8 +2,9 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from Frontend.SuperAD import Ui_SuperAD
-from Frontend.Reader import Ui_Reader
+from Frontend.super.superadmin_add_admin import SuperadminAddAdmin
+from Frontend.super.superadmin_delete_admin import SuperadminDeleteAdmin
+from Frontend.super.superadmin_search import SuperadminSearch
 from Frontend.reader.my_page import MyPage
 from Frontend.reader.reader_search_book import ReaderSearchBook
 from Frontend.reader.reader_borrow_return import ReaderBorrowReturn
@@ -59,34 +60,44 @@ class ReaderIn(SplitFluentWindow):
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
-
-        self.resize((int)(desktop.width() * 0.8), (int)(desktop.height() * 0.9))
-
+        self.resize((int)(w * 0.8), (int)(h * 0.9))
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
-
-        self.resize((int)(desktop.width() * 0.8), (int)(desktop.height() * 0.8))
 
 
 # 超管界面
-class SupAD(Ui_SuperAD):
-    def __init__(self, parent=None):
-        super(SupAD, self).__init__(parent)
+class SupAD(SplitFluentWindow):
+    def __init__(self):
+        super().__init__()
 
-        self.setupUi(self)
-        self.retranslateUi(self)
+        self.superadminAddAdmin = SuperadminAddAdmin(self)
+        self.superadminDeleteAdmin = SuperadminDeleteAdmin(self)
+        self.superadminSearch = SuperadminSearch(self)
 
-        self.queryAD.clicked.connect(self.display)  # 查询管理员界面
-        self.addAD.clicked.connect(self.display)  # 增加管理员界面
-        self.deleteAD.clicked.connect(self.display)  # 删除管理员界面
+        self.initNavigation()
+        self.initWindow()
 
-    def display(self):
-        sender = self.sender()
-        if sender.text() == "管理员查询":
-            self.stackedWidget.setCurrentIndex(0)
-        elif sender.text() == "增加管理员":
-            self.stackedWidget.setCurrentIndex(1)
-        elif sender.text() == "删除管理员":
-            self.stackedWidget.setCurrentIndex(2)
+    def initNavigation(self):
+        # add sub interface
+        self.addSubInterface(self.superadminAddAdmin, FluentIcon.ADD, '增加管理员')
+        self.addSubInterface(self.superadminDeleteAdmin, FluentIcon.DELETE, '删除管理员')
+        self.addSubInterface(self.superadminSearch, FluentIcon.SEARCH, '管理员查询')
+
+        self.navigationInterface.addItem(
+            routeKey='settingInterface',
+            icon=FluentIcon.POWER_BUTTON,
+            text='退出登录',
+            position=NavigationItemPosition.BOTTOM,
+            onClick=self.close
+        )
+
+    def initWindow(self):
+        self.setWindowTitle('超级管理员界面')
+        self.setWindowIcon(QIcon(':/images/logo.png'))
+
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.resize((int)(w * 0.8), (int)(h * 0.9))
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)\
 
 
 # 管理员界面
@@ -175,9 +186,9 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         self.Admin.Confirm_4.clicked.connect(self.check_book)
         # self.Admin.Confirm_5.clicked.connect(self.modify_book)
         # self.Admin.Confirm_6.clicked.connect(self.delete_book)
-        self.Super.doQuery.clicked.connect(self.find_admin)
-        self.Super.pushButton.clicked.connect(self.add_admin)
-        self.Super.pushButton_2.clicked.connect(self.delete_admin)
+        self.Super.superadminSearch.adminSearchEdit.searchSignal.connect(self.find_admin)
+        self.Super.superadminAddAdmin.finshButton.clicked.connect(self.add_admin)
+        self.Super.superadminDeleteAdmin.finshButton.clicked.connect(self.delete_admin)
         self.Register.pushButton.clicked.connect(self.add_reader)
         self.Reader.readerSearchBook.searchButton.clicked.connect(self.reader_find_book)
         self.Reader.readerInfoModify.confirm.clicked.connect(self.modify_reader)
@@ -285,6 +296,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
 
                 self.CurrentReader = userName
                 self.Reader.show()
+                self.Reader.readerBorrowReturn.refresh_rent_book_list(self.CurrentReader)
                 self.LoginReader.close()
             else:
                 QMessageBox.warning(self.LoginReader, 'warning', '学号或密码错误！')
@@ -700,9 +712,10 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
 
     # 实现添加管理员
     def add_admin(self):
-        user = self.Super.lineEdit_3.text()
-        id = self.Super.lineEdit_2.text()
-        password = self.Super.lineEdit_4.text()
+        ui = self.Super.superadminAddAdmin
+        user = ui.adminName.text()
+        id = ui.adminId.text()
+        password = ui.adminPassword.text()
         if len(user) == 0 or len(id) == 0 or len(password) == 0:
             QMessageBox.warning(self.Super, '警告', '请补全管理员信息！')
             return
@@ -714,29 +727,30 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
             try:
                 self.Lib_DB.insert_admin(admin)
                 QMessageBox.information(self.Super, '通知', '添加管理员成功！')
-                self.Super.lineEdit_3.clear()
-                self.Super.lineEdit_2.clear()
-                self.Super.lineEdit_4.clear()
+                ui.adminId.clear()
+                ui.adminName.clear()
+                ui.adminPassword.clear()
             except Exception as e:
                 print(e)
 
     # 实现查找管理员
     def find_admin(self):
-        id = self.Super.lineEdit.text()
+        ui = self.Super.superadminSearch
+        id = ui.adminSearchEdit.text()
         if len(id) == 0:
             admins = self.Lib_DB.show_admin()
             print(admins)
             if not len(admins) == 0:
                 try:
-                    self.Super.tableWidget.clearContents()
-                    self.Super.tableWidget.setRowCount(0)
+                    ui.adminList.clearContents()
+                    ui.adminList.setRowCount(0)
                     for line in admins:
-                        currentRowCount = self.Super.tableWidget.rowCount()
-                        self.Super.tableWidget.insertRow(currentRowCount)
-                        self.Super.tableWidget.setItem(currentRowCount, 0, QTableWidgetItem(str(line['admin_id'])))
-                        self.Super.tableWidget.setItem(currentRowCount, 1, QTableWidgetItem(line['admin_user']))
-                        self.Super.tableWidget.setItem(currentRowCount, 2, QTableWidgetItem(line['admin_password']))
-                        self.Super.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+                        currentRowCount = ui.adminList.rowCount()
+                        ui.adminList.insertRow(currentRowCount)
+                        ui.adminList.setItem(currentRowCount, 0, QTableWidgetItem(str(line['admin_id'])))
+                        ui.adminList.setItem(currentRowCount, 1, QTableWidgetItem(line['admin_user']))
+                        ui.adminList.setItem(currentRowCount, 2, QTableWidgetItem(line['admin_password']))
+                        ui.adminList.setEditTriggers(QAbstractItemView.NoEditTriggers)
                     print("浏览管理员成功")
                 except Exception as e:
                     print(e)
@@ -753,20 +767,21 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                     QMessageBox.warning(self.Super, '警告', '未找到管理员，请检查工号是否正确！')
                     return
                 else:
-                    self.Super.tableWidget.clearContents()
-                    self.Super.tableWidget.setRowCount(0)
-                    currentRowCount = self.Super.tableWidget.rowCount()
-                    self.Super.tableWidget.insertRow(currentRowCount)
-                    self.Super.tableWidget.setItem(currentRowCount, 0, QTableWidgetItem(str(results[0][1])))
-                    self.Super.tableWidget.setItem(currentRowCount, 1, QTableWidgetItem(results[0][0]))
-                    self.Super.tableWidget.setItem(currentRowCount, 2, QTableWidgetItem(results[0][2]))
-                    self.Super.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+                    ui.adminList.clearContents()
+                    ui.adminList.setRowCount(0)
+                    currentRowCount = ui.adminList.rowCount()
+                    ui.adminList.insertRow(currentRowCount)
+                    ui.adminList.setItem(currentRowCount, 0, QTableWidgetItem(str(results[0][1])))
+                    ui.adminList.setItem(currentRowCount, 1, QTableWidgetItem(results[0][0]))
+                    ui.adminList.setItem(currentRowCount, 2, QTableWidgetItem(results[0][2]))
+                    ui.adminList.setEditTriggers(QAbstractItemView.NoEditTriggers)
             except Exception as e:
                 print(e)
 
     # 实现删除管理员
     def delete_admin(self):
-        id = self.Super.lineEdit_5.text()
+        ui = self.Super.superadminDeleteAdmin
+        id = ui.adminId.text()
         if len(id) == 0:
             QMessageBox.warning(self.Super, '警告', '请补全工号！')
             return
@@ -787,7 +802,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 if reply == QMessageBox.Yes:
                     try:
                         self.Lib_DB.admin_delete(id)
-                        self.Super.lineEdit_5.clear()
+                        ui.adminId.clear()
                         QMessageBox.information(self.Super, '通知', '删除管理员成功！')
                     except Exception as e:
                         print(e)

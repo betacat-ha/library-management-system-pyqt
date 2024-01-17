@@ -98,13 +98,13 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
-             <widget class="LineEdit" name="bookTitle"/>
+             <widget class="LineEdit" name="adminId"/>
             </item>
             <item>
-             <widget class="LineEdit" name="bookIndex"/>
+             <widget class="LineEdit" name="adminName"/>
             </item>
             <item>
-             <widget class="LineEdit" name="bookAuthor"/>
+             <widget class="LineEdit" name="adminPassword"/>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5"/>

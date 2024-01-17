@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>书刊查找</string>
+   <string>管理员查询</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="topMargin">
@@ -48,10 +48,24 @@
          <number>15</number>
         </property>
         <item>
-         <widget class="TableWidget" name="superSearch">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>输入查询工号（ID）：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="SearchLineEdit" name="adminSearchEdit"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="TableWidget" name="adminList">
           <property name="maximumSize">
            <size>
-            <width>445</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>
@@ -89,6 +103,16 @@
   <customwidget>
    <class>TitleLabel</class>
    <extends>QLabel</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>SearchLineEdit</class>
+   <extends>LineEdit</extends>
    <header>qfluentwidgets</header>
   </customwidget>
   <customwidget>
