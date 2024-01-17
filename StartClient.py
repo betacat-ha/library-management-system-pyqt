@@ -59,6 +59,9 @@ class ReaderIn(SplitFluentWindow):
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
+
+        self.resize((int)(desktop.width() * 0.8), (int)(desktop.height() * 0.9))
+
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
         self.resize((int)(desktop.width() * 0.8), (int)(desktop.height() * 0.8))
