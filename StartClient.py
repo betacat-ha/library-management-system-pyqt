@@ -185,6 +185,12 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         # self.Reader.commandLinkButton_5.clicked.connect(self.displayRentBorrow)  # 借书还书界面
         self.CurrentReader = -1
 
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        # self.resize((int)(w * 0.8), (int)(h * 0.9))
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+
+
     def displayRentBorrow(self):
         sender = self.Reader.sender()
         if sender.text() == "借书/还书":
@@ -733,6 +739,12 @@ class LoginAdmin(FramelessWindow, Ui_LoginAdmin):
         # 设置标题栏
         self.setTitleBar(StandardTitleBar(self))
 
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.resize((int)(w * 0.8), (int)(h * 0.9))
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+
+
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
             self._endPos = e.pos() - self._startPos
@@ -761,6 +773,11 @@ class LoginReader(FramelessWindow, Ui_LoginReader):
         # 设置标题栏
         self.setTitleBar(StandardTitleBar(self))
 
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.resize((int)(w * 0.8), (int)(h * 0.9))
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
             self._endPos = e.pos() - self._startPos
@@ -788,6 +805,12 @@ class LoginSuper(FramelessWindow, Ui_LoginSuper):
 
         # 设置标题栏
         self.setTitleBar(StandardTitleBar(self))
+
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.resize((int)(w * 0.8), (int)(h * 0.9))
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
+
 
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
