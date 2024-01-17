@@ -1,6 +1,10 @@
 <RCC>
   <qresource>
+    <file>images/girl.jpg</file>
+    <file>images/background.jpg</file>
     <file>images/logo.png</file>
-    <file>images/background.png</file>
+    <file>images/todo.png</file>
+    <file>images/alarms.png</file>
+    <file>images/tips.png</file>
   </qresource>
 </RCC>

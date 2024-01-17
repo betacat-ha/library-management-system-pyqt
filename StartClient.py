@@ -12,8 +12,11 @@ from Frontend.LoginSuper import Ui_LoginSuper
 from Frontend.Admin import Ui_Admin
 from Frontend.MainWin import Ui_MainWin
 from Frontend.Register import Ui_Register
-from Backend.WHU_DB import Database
-import datetime
+from Backend.Lib_DB import Database
+from qframelesswindow import FramelessWindow, StandardTitleBar
+from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
+                            NavigationAvatarWidget,  SplitFluentWindow, FluentTranslator)
+from qfluentwidgets import FluentIcon
 import time
 
 SuperUser = 'Super'  # 超级管理员用户名
@@ -93,7 +96,7 @@ class AdminGUI(QWidget, Ui_Admin):
 
         self.Cancel_4.clicked.connect(self.display)
 
-        self.Cancel_5.clicked.connect(self.display)
+        # self.Cancel_5.clicked.connect(self.display)
 
         self.lineEdit_16.setReadOnly(True)
         self.lineEdit_17.setReadOnly(True)
@@ -125,11 +128,14 @@ class AdminGUI(QWidget, Ui_Admin):
 
 
 # 主界面
-class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
+class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
     def __init__(self, parent=None):
         super(MainWin, self).__init__(parent)
 
         self.setupUi(self)
+
+        # 设置标题栏
+        self.setTitleBar(StandardTitleBar(self))
 
         self.pushButton_7.clicked.connect(self.displayReader)  # 选择登录读者
         self.pushButton_6.clicked.connect(self.displayAdmin)
@@ -142,7 +148,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         self.Super = SupAD()
         self.Reader = ReaderIn()
         self.Register = Register()
-        self.WHU_DB = Database()
+        self.Lib_DB = Database()
         self.LoginAdmin.pushButton.clicked.connect(self.EnterAdmin)
         self.LoginSuper.pushButton.clicked.connect(self.EnterSuper)
         self.LoginReader.pushButton.clicked.connect(self.EnterReader)
@@ -154,15 +160,14 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         self.Admin.Confirm_4.clicked.connect(self.check_book)
         self.Admin.Confirm_5.clicked.connect(self.modify_book)
         self.Admin.Confirm_6.clicked.connect(self.delete_book)
+        # self.Admin.Confirm_5.clicked.connect(self.modify_book)
+        # self.Admin.Confirm_6.clicked.connect(self.delete_book)
         self.Super.doQuery.clicked.connect(self.find_admin)
         self.Super.pushButton.clicked.connect(self.add_admin)
         self.Super.pushButton_2.clicked.connect(self.delete_admin)
         self.Register.pushButton.clicked.connect(self.add_reader)
-        self.Reader.pushButton_3.clicked.connect(self.reader_find_book)
-        self.Reader.pushButton_2.clicked.connect(self.modify_reader)
-        self.Reader.pushButton_4.clicked.connect(self.borrow_book)
-        self.Reader.pushButton_5.clicked.connect(self.return_book)
         self.Reader.commandLinkButton_5.clicked.connect(self.displayRentBorrow)  # 借书还书界面
+        # self.Reader.commandLinkButton_5.clicked.connect(self.displayRentBorrow)  # 借书还书界面
         self.CurrentReader = -1
 
     def displayRentBorrow(self):
@@ -171,13 +176,13 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
             if not self.CurrentReader == -1:
                 stu_id = self.CurrentReader
                 try:
-                    results = self.WHU_DB.browse_rent(stu_id)
+                    results = self.Lib_DB.browse_rent(stu_id)
                     self.Reader.tableWidget_2.clearContents()
                     self.Reader.tableWidget_2.setRowCount(0)
                     if not len(results) == 0:
                         for line in results:
                             searched_book = {'id': line[0], 'name': '', 'author': '', 'pubdate': ''}
-                            book = self.WHU_DB.search_book(searched_book)
+                            book = self.Lib_DB.search_book(searched_book)
                             print(book)
                             currentRowCount = self.Reader.tableWidget_2.rowCount()
                             self.Reader.tableWidget_2.insertRow(currentRowCount)
@@ -216,7 +221,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         if len(userName) == 0 or len(password) == 0:
             QMessageBox.warning(self.LoginAdmin, 'warning', '请补全工号或密码！')
         else:
-            verify = self.WHU_DB.login_admin(userName, password)
+            verify = self.Lib_DB.login_admin(userName, password)
             if verify:
                 self.LoginAdmin.lineEdit.clear()
                 self.LoginAdmin.lineEdit_2.clear()
@@ -253,14 +258,14 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
     def EnterReader(self):
         self.CurrentReader = -1
         userName = self.LoginReader.lineEdit.text()  # 获取学号
-        password = self.LoginReader.lineEdit_2.text()  # 获取密码
+        password = self.LoginReader.lineEdit_4.text()  # 获取密码
         if len(userName) == 0 or len(password) == 0:
             QMessageBox.warning(self.LoginReader, 'warning', '请补全学号或密码！')
         else:
-            verify = self.WHU_DB.login_reader(userName, password)
+            verify = self.Lib_DB.login_reader(userName, password)
             if verify:
                 self.LoginReader.lineEdit.clear()
-                self.LoginReader.lineEdit_2.clear()
+                self.LoginReader.lineEdit_4.clear()
 
                 self.CurrentReader = userName
                 self.Reader.show()
@@ -272,7 +277,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         self.Register.show()
 
     def browse_book(self):
-        books = self.WHU_DB.show_book()
+        books = self.Lib_DB.show_book()
         if not len(books) == 0:
             try:
                 self.Admin.tableWidget_4.clearContents()
@@ -310,7 +315,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
             QMessageBox.warning(self.Admin, '警告', '暂无图书信息！')
 
     def browse_reader(self):
-        readers = self.WHU_DB.show_reader()
+        readers = self.Lib_DB.show_reader()
         print(readers)
         if not len(readers) == 0:
             try:
@@ -431,7 +436,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                         splitdate[2]) in range(1, 32):
                     new_book = {'id': index, 'name': name, 'author': author, 'pubdate': pubdate}
                     try:
-                        self.WHU_DB.insert_book(new_book)
+                        self.Lib_DB.insert_book(new_book)
                         QMessageBox.information(self.Admin, '通知', '添加图书成功！')
                         self.Admin.Name_3.clear()
                         self.Admin.User_5.clear()
@@ -474,11 +479,11 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                 searched_book = {'id': index, 'name': name, 'author': author, 'pubdate': pubdate}
                 print(searched_book)
                 # print(333)
-                # results = self.WHU_DB.search_book(searched_book)
+                # results = self.Lib_DB.search_book(searched_book)
                 # if len(results) == 0:
                 #     QMessageBox.warning(self.Admin, 'warning', '未查找到符合结果，请检查输入信息是否正确！')
                 st = time.time()
-                results = self.WHU_DB.search_book(searched_book)
+                results = self.Lib_DB.search_book(searched_book)
                 timelen = time.time() - st
                 # print(timelen)
                 if len(results) == 0:
@@ -531,7 +536,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                                                  QMessageBox.No)
                     if reply == QMessageBox.Yes:
                         try:
-                            self.WHU_DB.book_modify(modified_book)
+                            self.Lib_DB.book_modify(modified_book)
                             self.Admin.lineEdit.clear()
                             self.Admin.lineEdit_2.clear()
                             self.Admin.lineEdit_3.clear()
@@ -561,7 +566,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         else:
             reader = {'id': id, 'name': name, 'dep': dep, 'oldpassword': oldpassword, 'newpassword': newpassword}
             try:
-                verify = self.WHU_DB.reader_modify(reader)
+                verify = self.Lib_DB.reader_modify(reader)
                 if verify:
                     QMessageBox.information(self.Admin, '通知', '修改读者成功！')
                     self.Reader.lineEdit.clear()
@@ -620,7 +625,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                 # if len(results) == 0:
                 #     QMessageBox.warning(self.Reader, 'warning', '未查找到符合结果，请检查输入信息是否正确！')
                 st = time.time()
-                results = self.WHU_DB.reader_search_book(searched_book)
+                results = self.Lib_DB.reader_search_book(searched_book)
                 timelen = time.time() - st
                 if len(results) == 0:
                     QMessageBox.warning(self.Reader, 'warning',
@@ -662,7 +667,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                                      QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
-                self.WHU_DB.book_delete(index)
+                self.Lib_DB.book_delete(index)
                 self.Admin.lineEdit.clear()
                 self.Admin.lineEdit_2.clear()
                 self.Admin.lineEdit_3.clear()
@@ -689,7 +694,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         else:
             admin = {'id': id, 'user': user, 'password': password}
             try:
-                self.WHU_DB.insert_admin(admin)
+                self.Lib_DB.insert_admin(admin)
                 QMessageBox.information(self.Super, '通知', '添加管理员成功！')
                 self.Super.lineEdit_3.clear()
                 self.Super.lineEdit_2.clear()
@@ -701,7 +706,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
     def find_admin(self):
         id = self.Super.lineEdit.text()
         if len(id) == 0:
-            admins = self.WHU_DB.show_admin()
+            admins = self.Lib_DB.show_admin()
             print(admins)
             if not len(admins) == 0:
                 try:
@@ -725,7 +730,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
             return
         else:
             try:
-                results = self.WHU_DB.search_admin(id)
+                results = self.Lib_DB.search_admin(id)
                 if len(results) == 0:
                     QMessageBox.warning(self.Super, '警告', '未找到管理员，请检查工号是否正确！')
                     return
@@ -751,7 +756,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
             QMessageBox.warning(self.Super, '警告', '管理员工号格式错误！')
             return
         else:
-            results = self.WHU_DB.search_admin(id)
+            results = self.Lib_DB.search_admin(id)
             if len(results) == 0:
                 QMessageBox.warning(self.Super, '警告', '未找到管理员，请检查工号是否正确！')
                 return
@@ -763,7 +768,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                                              QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     try:
-                        self.WHU_DB.admin_delete(id)
+                        self.Lib_DB.admin_delete(id)
                         self.Super.lineEdit_5.clear()
                         QMessageBox.information(self.Super, '通知', '删除管理员成功！')
                     except Exception as e:
@@ -787,7 +792,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         else:
             reader = {'id': id, 'name': name, 'password': password, 'dep': dep, 'user': user}
             try:
-                self.WHU_DB.insert_reader(reader)
+                self.Lib_DB.insert_reader(reader)
                 QMessageBox.information(self.Register, '通知', '用户注册成功！')
                 self.Register.close()
                 self.displayReader()
@@ -805,7 +810,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         else:
             try:
                 stu_id = self.CurrentReader
-                return_num = self.WHU_DB.book_rent(book_id, stu_id)
+                return_num = self.Lib_DB.book_rent(book_id, stu_id)
                 if return_num == 1:
                     QMessageBox.warning(self.Reader, '警告', '未找到要借的图书,请检查索引')
                 if return_num == 2:
@@ -816,12 +821,11 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                 if return_num == 4:
                     QMessageBox.warning(self.Reader, '警告', '有bug')
                 results = self.WHU_DB.browse_rent(stu_id)
-                self.Reader.tableWidget_2.clearContents()
-                self.Reader.tableWidget_2.setRowCount(0)
+                results = self.Lib_DB.browse_rent(stu_id)
                 if not len(results) == 0:
                     for line in results:
                         searched_book = {'id': line[0], 'name': '', 'author': '', 'pubdate': ''}
-                        book = self.WHU_DB.search_book(searched_book)
+                        book = self.Lib_DB.search_book(searched_book)
                         print(book)
                         currentRowCount = self.Reader.tableWidget_2.rowCount()
                         self.Reader.tableWidget_2.insertRow(currentRowCount)
@@ -851,7 +855,7 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
         else:
             try:
                 stu_id = self.CurrentReader
-                return_num = self.WHU_DB.book_return(book_id, stu_id)
+                return_num = self.Lib_DB.book_return(book_id, stu_id)
                 if return_num == 1:
                     QMessageBox.warning(self.Reader, '警告', '未找到要还的图书,请检查索引')
                 if return_num == 2:
@@ -863,13 +867,13 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
                     self.Reader.lineEdit_13.clear()
                 if return_num == 5:
                     QMessageBox.warning(self.Reader, '警告', '有bug')
-                results = self.WHU_DB.browse_rent(stu_id)
-                self.Reader.tableWidget_2.clearContents()
-                self.Reader.tableWidget_2.setRowCount(0)
+                results = self.Lib_DB.browse_rent(stu_id)
+                ui.bookList.clearContents()
+                ui.bookList.setRowCount(0)
                 if not len(results) == 0:
                     for line in results:
                         searched_book = {'id': line[0], 'name': '', 'author': '', 'pubdate': ''}
-                        book = self.WHU_DB.search_book(searched_book)
+                        book = self.Lib_DB.search_book(searched_book)
                         print(book)
                         currentRowCount = self.Reader.tableWidget_2.rowCount()
                         self.Reader.tableWidget_2.insertRow(currentRowCount)
@@ -891,14 +895,15 @@ class MainWin(QWidget, Ui_MainWin):  # 实现前后端功能对接
 
 
 # 管理员登录界面
-class LoginAdmin(QWidget, Ui_LoginAdmin):
+class LoginAdmin(FramelessWindow, Ui_LoginAdmin):
     def __init__(self, parent=None):
         super(LoginAdmin, self).__init__()
 
         self.setupUi(self)
         self.pushButton_2.clicked.connect(self.close)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)  # 窗口置顶，无边框，在任务栏不显示图标
-        self.setAttribute(Qt.WA_TranslucentBackground)
+
+        # 设置标题栏
+        self.setTitleBar(StandardTitleBar(self))
 
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
@@ -918,15 +923,16 @@ class LoginAdmin(QWidget, Ui_LoginAdmin):
 
 
 # 读者登录界面
-class LoginReader(QWidget, Ui_LoginReader):
+class LoginReader(FramelessWindow, Ui_LoginReader):
     def __init__(self, parent=None):
         super(LoginReader, self).__init__()
 
         self.setupUi(self)
         self.pushButton_2.clicked.connect(self.close)
 
-        # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)  # 窗口置顶，无边框，在任务栏不显示图标
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        # 设置标题栏
+        self.setTitleBar(StandardTitleBar(self))
+
 
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
@@ -946,15 +952,15 @@ class LoginReader(QWidget, Ui_LoginReader):
 
 
 # 超级管理员登录界面
-class LoginSuper(QWidget, Ui_LoginSuper):
+class LoginSuper(FramelessWindow, Ui_LoginSuper):
     def __init__(self, parent=None):
         super(LoginSuper, self).__init__()
 
         self.setupUi(self)
         self.pushButton_2.clicked.connect(self.close)
 
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)  # 窗口置顶，无边框，在任务栏不显示图标
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        # 设置标题栏
+        self.setTitleBar(StandardTitleBar(self))
 
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
@@ -1001,7 +1007,11 @@ class Register(QWidget, Ui_Register):
 
 
 if __name__ == "__main__":
-    app = QApplication([])
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+
+    app = QApplication(sys.argv)
     stats = MainWin()
     stats.show()
     sys.exit(app.exec())

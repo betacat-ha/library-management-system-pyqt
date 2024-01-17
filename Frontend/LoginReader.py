@@ -22,7 +22,7 @@ class Ui_LoginReader(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtWidgets.QLabel(LoginReader)
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/images/background.png"))
+        self.label.setPixmap(QtGui.QPixmap(":/images/library-4.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
