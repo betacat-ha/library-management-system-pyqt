@@ -852,6 +852,6 @@ if __name__ == "__main__":
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 
     app = QApplication(sys.argv)
-    stats = AdminGUI()
+    stats = MainWin()
     stats.show()
     sys.exit(app.exec())
