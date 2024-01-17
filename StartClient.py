@@ -1,11 +1,13 @@
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMessageBox
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from Frontend.SuperAD import Ui_SuperAD
 from Frontend.Reader import Ui_Reader
+from Frontend.reader.my_page import MyPage
+from Frontend.reader.reader_search_book import ReaderSearchBook
+from Frontend.reader.reader_borrow_return import ReaderBorrowReturn
+from Frontend.reader.reader_info_modify import ReaderInfoModify
 from Frontend.LoginAdmin import Ui_LoginAdmin
 from Frontend.LoginReader import Ui_LoginReader
 from Frontend.LoginSuper import Ui_LoginSuper
@@ -24,18 +26,40 @@ SuperPassword = '123'  # 超级管理员密码
 
 
 # 读者界面
-class ReaderIn(Ui_Reader):
-    def __init__(self, parent=None):
-        super(ReaderIn, self).__init__(parent)
+class ReaderIn(SplitFluentWindow):
+    def __init__(self):
+        super().__init__()
 
-        self.setupUi(self)
-        self.retranslateUi(self)
+        self.readerSearchBook = ReaderSearchBook(self)
+        self.readerBorrowReturn = ReaderBorrowReturn(self)
+        self.readerInfoModify = ReaderInfoModify(self)
+        # self.myPage = MyPage(self)
 
-        self.commandLinkButton.clicked.connect(self.display)  # 书刊查找界面
+        self.initNavigation()
+        self.initWindow()
 
-        self.commandLinkButton_6.clicked.connect(self.display)  # 读者信息修改界面
-        self.commandLinkButton_7.clicked.connect(self.close)
-        self.pushButton.clicked.connect(self.reset)
+    def initNavigation(self):
+        # add sub interface
+        self.addSubInterface(self.readerSearchBook, FluentIcon.SEARCH, '书刊查找')
+        self.addSubInterface(self.readerBorrowReturn, FluentIcon.LIBRARY, '借书/还书')
+        self.addSubInterface(self.readerInfoModify, FluentIcon.SETTING, '个人信息修改')
+        # self.addSubInterface(MyPage(self), FluentIcon.USER, '我的')
+
+        self.navigationInterface.addItem(
+            routeKey='settingInterface',
+            icon=FluentIcon.POWER_BUTTON,
+            text='注销',
+            position=NavigationItemPosition.BOTTOM,
+        )
+
+    def initWindow(self):
+        self.resize(900, 700)
+        self.setWindowTitle('读者界面')
+        self.setWindowIcon(QIcon(':/images/logo.png'))
+
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.move(w//2 - self.width()//2, h//2 - self.height()//2)
 
     def reset(self):
         self.lineEdit.clear()
@@ -43,14 +67,6 @@ class ReaderIn(Ui_Reader):
         self.lineEdit_3.clear()
         self.lineEdit_4.clear()
         self.lineEdit_5.clear()
-
-    def display(self):
-        sender = self.sender()
-        if sender.text() == "书刊查找":
-            self.stackedWidget.setCurrentIndex(1)
-        elif sender.text() == "读者信息修改":
-            self.stackedWidget.setCurrentIndex(0)
-
 
 # 超管界面
 class SupAD(Ui_SuperAD):
@@ -117,7 +133,7 @@ class AdminGUI(QWidget, Ui_Admin):
             self.Stack.setCurrentIndex(1)
         elif sender.text() == "书刊查找":
             self.Stack.setCurrentIndex(2)
-        elif sender.text() == "修改/删除图书":
+        elif sender.text() == "修改图书信息":
             self.Stack.setCurrentIndex(3)
         elif sender.text() == "浏览图书信息":
             self.Stack.setCurrentIndex(4)
@@ -158,15 +174,16 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         self.Admin.pushButton_21.clicked.connect(self.browse_reader)
         self.Admin.Confirm_2.clicked.connect(self.find_book)
         self.Admin.Confirm_4.clicked.connect(self.check_book)
-        self.Admin.Confirm_5.clicked.connect(self.modify_book)
-        self.Admin.Confirm_6.clicked.connect(self.delete_book)
         # self.Admin.Confirm_5.clicked.connect(self.modify_book)
         # self.Admin.Confirm_6.clicked.connect(self.delete_book)
         self.Super.doQuery.clicked.connect(self.find_admin)
         self.Super.pushButton.clicked.connect(self.add_admin)
         self.Super.pushButton_2.clicked.connect(self.delete_admin)
         self.Register.pushButton.clicked.connect(self.add_reader)
-        self.Reader.commandLinkButton_5.clicked.connect(self.displayRentBorrow)  # 借书还书界面
+        self.Reader.readerSearchBook.searchButton.clicked.connect(self.reader_find_book)
+        self.Reader.readerInfoModify.confirm.clicked.connect(self.modify_reader)
+        self.Reader.readerBorrowReturn.borrowButton.clicked.connect(self.borrow_book)
+        self.Reader.readerBorrowReturn.returnButton.clicked.connect(self.return_book)
         # self.Reader.commandLinkButton_5.clicked.connect(self.displayRentBorrow)  # 借书还书界面
         self.CurrentReader = -1
 
@@ -374,7 +391,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 print(searched_book)
                 # print(222)
                 st = time.time()
-                results = self.WHU_DB.search_book(searched_book)
+                results = self.Lib_DB.search_book(searched_book)
                 timelen = time.time() - st
                 # print(timelen)
                 if len(results) == 0:
@@ -554,11 +571,12 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
 
     # 实现读者信息修改
     def modify_reader(self):
-        name = self.Reader.lineEdit.text()
-        id = self.Reader.lineEdit_2.text()
-        dep = self.Reader.lineEdit_3.text()
-        oldpassword = self.Reader.lineEdit_4.text()
-        newpassword = self.Reader.lineEdit_5.text()
+        ui = self.Reader.readerInfoModify
+        name = ui.name.text()
+        id = ui.id.text()
+        dep = ui.dep.text()
+        oldpassword = ui.oldPassword.text()
+        newpassword = ui.newPassword.text()
         if len(name) == 0 or len(id) == 0 or len(dep) == 0 or len(oldpassword) == 0 or len(newpassword) == 0:
             QMessageBox.warning(self.Reader, 'warning', '请补全读者信息！')
         elif not id.isdigit():
@@ -569,11 +587,11 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 verify = self.Lib_DB.reader_modify(reader)
                 if verify:
                     QMessageBox.information(self.Admin, '通知', '修改读者成功！')
-                    self.Reader.lineEdit.clear()
-                    self.Reader.lineEdit_2.clear()
-                    self.Reader.lineEdit_3.clear()
-                    self.Reader.lineEdit_4.clear()
-                    self.Reader.lineEdit_5.clear()
+                    # ui.name.clear()
+                    # ui.id.clear()
+                    # ui.dep.clear()
+                    ui.oldPassword.clear()
+                    ui.newPassword.clear()
 
                 else:
                     QMessageBox.warning(self.Reader, '错误', '请检查学号和原密码是否正确！')
@@ -582,11 +600,12 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
 
     # 实现读者界面的书刊查找
     def reader_find_book(self):
-        name = self.Reader.lineEdit_6.text()  # 获取书名
-        index = self.Reader.lineEdit_9.text()  # 获取索引号
-        author = self.Reader.lineEdit_12.text()  # 获取作者
-        fardate = self.Reader.lineEdit_10.text()
-        neardate = self.Reader.lineEdit_11.text()
+        ui = self.Reader.readerSearchBook
+        name = ui.bookTitle.text()  # 获取书名
+        index = ui.bookIndex.text()  # 获取索引号
+        author = ui.bookAuthor.text()  # 获取作者
+        fardate = ui.publishYearStart.text()
+        neardate = ui.publishYearEnd.text()
         timelen = 0.0
         splitdate1 = fardate.split('-')
         splitdate2 = neardate.split('-')
@@ -621,7 +640,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 searched_book = {'id': index, 'name': name, 'author': author, 'fardate': fardate, 'neardate': neardate}
                 print(searched_book)
                 # print(111)
-                # results = self.WHU_DB.reader_search_book(searched_book)
+                # results = self.Lib_DB.reader_search_book(searched_book)
                 # if len(results) == 0:
                 #     QMessageBox.warning(self.Reader, 'warning', '未查找到符合结果，请检查输入信息是否正确！')
                 st = time.time()
@@ -631,25 +650,25 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                     QMessageBox.warning(self.Reader, 'warning',
                                         '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
                 else:
-                    self.Reader.tableWidget.clearContents()
-                    self.Reader.tableWidget.setRowCount(0)
+                    ui.bookList.clearContents()
+                    ui.bookList.setRowCount(0)
                     for line in results:
-                        currentRowCount = self.Reader.tableWidget.rowCount()
-                        self.Reader.tableWidget.insertRow(currentRowCount)
-                        self.Reader.tableWidget.setItem(currentRowCount, 0, QTableWidgetItem(line[0]))
-                        self.Reader.tableWidget.setItem(currentRowCount, 1, QTableWidgetItem(line[2]))
+                        currentRowCount = ui.bookList.rowCount()
+                        ui.bookList.insertRow(currentRowCount)
+                        ui.bookList.setItem(currentRowCount, 0, QTableWidgetItem(line[0]))
+                        ui.bookList.setItem(currentRowCount, 1, QTableWidgetItem(line[2]))
                         if str(line[3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                            self.Reader.tableWidget.setItem(currentRowCount, 2,
+                            ui.bookList.setItem(currentRowCount, 2,
                                                             QTableWidgetItem(
                                                                 str(line[3].strftime('%Y-%m-%d')).split("-")[
                                                                     0]))
                         else:
-                            self.Reader.tableWidget.setItem(currentRowCount, 2,
+                            ui.bookList.setItem(currentRowCount, 2,
                                                             QTableWidgetItem(
                                                                 str(line[3].strftime('%Y-%m-%d'))))
-                        self.Reader.tableWidget.setItem(currentRowCount, 3,
+                        ui.bookList.setItem(currentRowCount, 3,
                                                         QTableWidgetItem(str(line[1])))
-                        self.Reader.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+                        ui.bookList.setEditTriggers(QAbstractItemView.NoEditTriggers)
                     QMessageBox.information(self.Reader, '通知',
                                             '查询完毕！查询用时：%4f s' % timelen)
             except Exception as e:
@@ -800,9 +819,11 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
             except Exception as e:
                 print(e)
 
+
     # 实现借书
     def borrow_book(self):
-        book_id = self.Reader.lineEdit_7.text()
+        ui = self.Reader.readerBorrowReturn
+        book_id = ui.borrowIndex.text()
         if len(book_id) == 0:
             QMessageBox.warning(self.Reader, '警告', '请填写借书索引')
         elif not book_id.isdigit():
@@ -817,37 +838,18 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                     QMessageBox.warning(self.Reader, '警告', '该图书已被借阅')
                 if return_num == 3:
                     QMessageBox.information(self.Reader, '通知', '借阅成功！')
-                    self.Reader.lineEdit_7.clear()
+                    ui.borrowIndex.clear()
                 if return_num == 4:
                     QMessageBox.warning(self.Reader, '警告', '有bug')
-                results = self.WHU_DB.browse_rent(stu_id)
-                results = self.Lib_DB.browse_rent(stu_id)
-                if not len(results) == 0:
-                    for line in results:
-                        searched_book = {'id': line[0], 'name': '', 'author': '', 'pubdate': ''}
-                        book = self.Lib_DB.search_book(searched_book)
-                        print(book)
-                        currentRowCount = self.Reader.tableWidget_2.rowCount()
-                        self.Reader.tableWidget_2.insertRow(currentRowCount)
-                        self.Reader.tableWidget_2.setItem(currentRowCount, 0, QTableWidgetItem(book[0][0]))
-                        self.Reader.tableWidget_2.setItem(currentRowCount, 1, QTableWidgetItem(book[0][2]))
-                        if str(book[0][3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                            self.Reader.tableWidget_2.setItem(currentRowCount, 2,
-                                                              QTableWidgetItem(
-                                                                  str(book[0][3].strftime('%Y-%m-%d')).split("-")[
-                                                                      0]))
-                        else:
-                            self.Reader.tableWidget_2.setItem(currentRowCount, 2,
-                                                              QTableWidgetItem(
-                                                                  str(book[0][3].strftime('%Y-%m-%d'))))
-                        self.Reader.tableWidget_2.setItem(currentRowCount, 3, QTableWidgetItem(str(book[0][1])))
-                        self.Reader.tableWidget_2.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+                ui.refresh_rent_book_list(stu_id)
             except Exception as e:
                 print(e)
 
     # 实现还书
     def return_book(self):
-        book_id = self.Reader.lineEdit_13.text()
+        ui = self.Reader.readerBorrowReturn
+        book_id = ui.returnIndex.text()
         if len(book_id) == 0:
             QMessageBox.warning(self.Reader, '警告', '请填写还书索引')
         elif not book_id.isdigit():
@@ -864,32 +866,11 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                     QMessageBox.warning(self.Reader, '警告', '无权归还此书')
                 if return_num == 4:
                     QMessageBox.information(self.Reader, '通知', '归还成功！')
-                    self.Reader.lineEdit_13.clear()
+                    ui.returnIndex.clear()
                 if return_num == 5:
                     QMessageBox.warning(self.Reader, '警告', '有bug')
-                results = self.Lib_DB.browse_rent(stu_id)
-                ui.bookList.clearContents()
-                ui.bookList.setRowCount(0)
-                if not len(results) == 0:
-                    for line in results:
-                        searched_book = {'id': line[0], 'name': '', 'author': '', 'pubdate': ''}
-                        book = self.Lib_DB.search_book(searched_book)
-                        print(book)
-                        currentRowCount = self.Reader.tableWidget_2.rowCount()
-                        self.Reader.tableWidget_2.insertRow(currentRowCount)
-                        self.Reader.tableWidget_2.setItem(currentRowCount, 0, QTableWidgetItem(book[0][0]))
-                        self.Reader.tableWidget_2.setItem(currentRowCount, 1, QTableWidgetItem(book[0][2]))
-                        if str(book[0][3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                            self.Reader.tableWidget_2.setItem(currentRowCount, 2,
-                                                             QTableWidgetItem(
-                                                                 str(book[0][3].strftime('%Y-%m-%d')).split("-")[
-                                                                     0]))
-                        else:
-                            self.Reader.tableWidget_2.setItem(currentRowCount, 2,
-                                                             QTableWidgetItem(
-                                                                 str(book[0][3].strftime('%Y-%m-%d'))))
-                        self.Reader.tableWidget_2.setItem(currentRowCount, 3, QTableWidgetItem(str(book[0][1])))
-                        self.Reader.tableWidget_2.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
+                ui.refresh_rent_book_list(stu_id)
             except Exception as e:
                 print(e)
 

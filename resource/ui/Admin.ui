@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>Admin</class>
+ <widget class="QWidget" name="Admin">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>868</width>
-    <height>560</height>
+    <height>581</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,11 +25,29 @@ background:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(254, 
 </string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_7">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="styleSheet">
       <string notr="true">QFrame#frame{
 background:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(254, 234, 255, 255), stop:0.664773 rgba(155, 190, 235, 255), stop:1 rgba(245, 226, 223, 255));}
+QFrame{
+border: 0px;
+}
 </string>
      </property>
      <property name="frameShape">
@@ -37,6 +55,9 @@ background:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(254, 
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4">
       <property name="spacing">
@@ -123,11 +144,14 @@ border-radius:20px;
                  <property name="layoutDirection">
                   <enum>Qt::LeftToRight</enum>
                  </property>
+                 <property name="styleSheet">
+                  <string notr="true">image: url(:/images/logo.png);</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
                  <property name="pixmap">
-                  <pixmap resource="../Pictures/picture.qrc">:/newPrefix/Zftg9sr846j51.png</pixmap>
+                  <pixmap>:/newPrefix/Zftg9sr846j51.png</pixmap>
                  </property>
                  <property name="scaledContents">
                   <bool>true</bool>
@@ -150,7 +174,7 @@ border-radius:20px;
                 <number>18</number>
                </property>
                <item>
-                <widget class="QPushButton" name="pushButton_8">
+                <widget class="PushButton" name="pushButton_8">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -172,8 +196,7 @@ border-radius:20px;
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border-radius:10px;
-background:rgba(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>添加图书</string>
@@ -199,7 +222,7 @@ background:rgba(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_9">
+                <widget class="PushButton" name="pushButton_9">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -221,8 +244,7 @@ background:rgba(255, 255, 255);</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border-radius:10px;
-background:rgba(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>书刊查找</string>
@@ -248,7 +270,7 @@ background:rgba(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_18">
+                <widget class="PushButton" name="pushButton_18">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -270,8 +292,7 @@ background:rgba(255, 255, 255);</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border-radius:10px;
-background:rgba(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>修改图书信息</string>
@@ -297,7 +318,7 @@ background:rgba(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_19">
+                <widget class="PushButton" name="pushButton_19">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -319,8 +340,7 @@ background:rgba(255, 255, 255);</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border-radius:10px;
-background:rgba(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>浏览图书信息</string>
@@ -346,7 +366,7 @@ background:rgba(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_21">
+                <widget class="PushButton" name="pushButton_21">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -368,8 +388,7 @@ background:rgba(255, 255, 255);</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border-radius:10px;
-background:rgba(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>查看读者信息</string>
@@ -395,7 +414,7 @@ background:rgba(255, 255, 255);</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_20">
+                <widget class="PushButton" name="pushButton_20">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -417,8 +436,7 @@ background:rgba(255, 255, 255);</string>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">border-radius:10px;
-background:rgba(255, 255, 255);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="text">
                   <string>账号注销</string>
@@ -454,11 +472,16 @@ background:rgba(255, 255, 255);</string>
       </item>
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
+        <property name="font">
+         <font>
+          <kerning>true</kerning>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="page_5">
          <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -479,7 +502,7 @@ background:rgba(255, 255, 255);</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_16">
+              <widget class="LineEdit" name="lineEdit_16">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -497,7 +520,7 @@ border-radius:2px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_17">
+              <widget class="LineEdit" name="lineEdit_17">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -512,12 +535,6 @@ border-radius:20px;
           </item>
           <item>
            <widget class="QFrame" name="frame_40">
-            <property name="styleSheet">
-             <string notr="true">QFrame#frame_40{
-border-image: url(:/common2/hutao.jpg);
-border-radius:20px
-}</string>
-            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -542,7 +559,7 @@ background:rgba(255, 255, 255,170)}</string>
                 <item>
                  <widget class="QFrame" name="frame_42">
                   <property name="styleSheet">
-                   <string notr="true">background:transparent</string>
+                   <string notr="true"/>
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
@@ -569,8 +586,8 @@ background:rgba(255, 255, 255,170)}</string>
                          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:6.75pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;欢迎使用管理员客户端！&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:26pt;&quot;&gt;欢迎使用管理员客户端！&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                         </property>
                        </widget>
                       </item>
@@ -607,13 +624,9 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_14">
+              <widget class="LineEdit" name="lineEdit_14">
                <property name="styleSheet">
-                <string notr="true">
-background:rgb(255,255,255);
-border-radius:2px;
-
-</string>
+                <string notr="true"/>
                </property>
               </widget>
              </item>
@@ -625,13 +638,9 @@ border-radius:2px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_15">
+              <widget class="LineEdit" name="lineEdit_15">
                <property name="styleSheet">
-                <string notr="true">
-background:rgb(255,255,255);
-border-radius:20px;
-
-</string>
+                <string notr="true"/>
                </property>
               </widget>
              </item>
@@ -670,7 +679,7 @@ background:rgba(255, 255, 255,170)}</string>
                 <item>
                  <widget class="QFrame" name="frame_33">
                   <property name="styleSheet">
-                   <string notr="true">background:transparent</string>
+                   <string notr="true"/>
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
@@ -722,11 +731,9 @@ background:rgba(255, 255, 255,170)}</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="Name_3">
+                       <widget class="LineEdit" name="Name_3">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -758,11 +765,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="User_5">
+                       <widget class="LineEdit" name="User_5">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -794,11 +799,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="User_6">
+                       <widget class="LineEdit" name="User_6">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -830,11 +833,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="Port_3">
+                       <widget class="LineEdit" name="Port_3">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -881,7 +882,7 @@ border-radius:10px</string>
                        <number>6</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="Confirm_3">
+                       <widget class="PrimaryPushButton" name="Confirm_3">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                           <horstretch>0</horstretch>
@@ -895,9 +896,7 @@ border-radius:10px</string>
                          </font>
                         </property>
                         <property name="styleSheet">
-                         <string notr="true">background:rgb(255, 255, 255);
-border-radius:18px
-</string>
+                         <string notr="true"/>
                         </property>
                         <property name="text">
                          <string>添加</string>
@@ -908,7 +907,7 @@ border-radius:18px
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="Cancel_3">
+                       <widget class="PushButton" name="Cancel_3">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                           <horstretch>0</horstretch>
@@ -922,8 +921,7 @@ border-radius:18px
                          </font>
                         </property>
                         <property name="styleSheet">
-                         <string notr="true">background:rgb(255, 255, 255);
-border-radius:18px</string>
+                         <string notr="true"/>
                         </property>
                         <property name="text">
                          <string>取消</string>
@@ -966,7 +964,7 @@ border-radius:18px</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_12">
+              <widget class="LineEdit" name="lineEdit_12">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -984,7 +982,7 @@ border-radius:2px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_13">
+              <widget class="LineEdit" name="lineEdit_13">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1029,7 +1027,7 @@ background:rgba(255, 255, 255,170)}</string>
                 <item>
                  <widget class="QFrame" name="frame_24">
                   <property name="styleSheet">
-                   <string notr="true">background:transparent</string>
+                   <string notr="true"/>
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
@@ -1081,11 +1079,9 @@ background:rgba(255, 255, 255,170)}</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="Name_2">
+                       <widget class="LineEdit" name="Name_2">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1117,11 +1113,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="User_3">
+                       <widget class="LineEdit" name="User_3">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1153,11 +1147,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="User_4">
+                       <widget class="LineEdit" name="User_4">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1189,11 +1181,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="Port_2">
+                       <widget class="LineEdit" name="Port_2">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1240,7 +1230,7 @@ border-radius:10px</string>
                        <number>6</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="Confirm_2">
+                       <widget class="PrimaryPushButton" name="Confirm_2">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                           <horstretch>0</horstretch>
@@ -1254,9 +1244,7 @@ border-radius:10px</string>
                          </font>
                         </property>
                         <property name="styleSheet">
-                         <string notr="true">background:rgb(255, 255, 255);
-border-radius:18px
-</string>
+                         <string notr="true"/>
                         </property>
                         <property name="text">
                          <string>查找</string>
@@ -1267,7 +1255,7 @@ border-radius:18px
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="Cancel_2">
+                       <widget class="PushButton" name="Cancel_2">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                           <horstretch>0</horstretch>
@@ -1281,8 +1269,7 @@ border-radius:18px
                          </font>
                         </property>
                         <property name="styleSheet">
-                         <string notr="true">background:rgb(255, 255, 255);
-border-radius:18px</string>
+                         <string notr="true"/>
                         </property>
                         <property name="text">
                          <string>取消</string>
@@ -1316,6 +1303,9 @@ border-radius:18px</string>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
+            <property name="lineWidth">
+             <number>0</number>
+            </property>
             <layout class="QHBoxLayout" name="horizontalLayout_37">
              <item>
               <widget class="QLabel" name="label_11">
@@ -1325,7 +1315,7 @@ border-radius:18px</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_18">
+              <widget class="LineEdit" name="lineEdit_18">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1343,7 +1333,7 @@ border-radius:2px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_19">
+              <widget class="LineEdit" name="lineEdit_19">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1359,10 +1349,7 @@ border-radius:20px;
           <item>
            <widget class="QFrame" name="frame_45">
             <property name="styleSheet">
-             <string notr="true">QFrame#frame_45{
-border-image: url(:/common2/hutao.jpg);
-border-radius:20px
-}</string>
+             <string notr="true"/>
             </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
@@ -1388,7 +1375,7 @@ background:rgba(255, 255, 255,170)}</string>
                 <item>
                  <widget class="QFrame" name="frame_47">
                   <property name="styleSheet">
-                   <string notr="true">background:transparent</string>
+                   <string notr="true"/>
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::StyledPanel</enum>
@@ -1440,11 +1427,9 @@ background:rgba(255, 255, 255,170)}</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="Name_4">
+                       <widget class="LineEdit" name="Name_4">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1476,11 +1461,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="User_7">
+                       <widget class="LineEdit" name="User_7">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1512,11 +1495,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="User_8">
+                       <widget class="LineEdit" name="User_8">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1548,11 +1529,9 @@ border-radius:10px</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="Port_4">
+                       <widget class="LineEdit" name="Port_4">
                         <property name="styleSheet">
-                         <string notr="true">background:rgba(255,255,255,50);
-padding:6px;
-border-radius:10px</string>
+                         <string notr="true"/>
                         </property>
                        </widget>
                       </item>
@@ -1599,7 +1578,7 @@ border-radius:10px</string>
                        <number>6</number>
                       </property>
                       <item>
-                       <widget class="QPushButton" name="Confirm_4">
+                       <widget class="PrimaryPushButton" name="Confirm_4">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                           <horstretch>0</horstretch>
@@ -1611,11 +1590,6 @@ border-radius:10px</string>
                           <family>黑体</family>
                           <pointsize>12</pointsize>
                          </font>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">background:rgb(255, 255, 255);
-border-radius:18px
-</string>
                         </property>
                         <property name="text">
                          <string>查找并修改</string>
@@ -1626,7 +1600,7 @@ border-radius:18px
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="Cancel_4">
+                       <widget class="PushButton" name="Cancel_4">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                           <horstretch>0</horstretch>
@@ -1640,8 +1614,7 @@ border-radius:18px
                          </font>
                         </property>
                         <property name="styleSheet">
-                         <string notr="true">background:rgb(255, 255, 255);
-border-radius:18px</string>
+                         <string notr="true"/>
                         </property>
                         <property name="text">
                          <string>取消</string>
@@ -1684,7 +1657,7 @@ border-radius:18px</string>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_9">
+              <widget class="LineEdit" name="lineEdit_9">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1702,7 +1675,7 @@ border-radius:20px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_7">
+              <widget class="LineEdit" name="lineEdit_7">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1785,7 +1758,7 @@ border-radius:20px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_8">
+              <widget class="LineEdit" name="lineEdit_8">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1803,7 +1776,7 @@ border-radius:2px;
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_6">
+              <widget class="LineEdit" name="lineEdit_6">
                <property name="styleSheet">
                 <string notr="true">
 background:rgb(255,255,255);
@@ -1888,8 +1861,25 @@ border-radius:20px;
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PrimaryPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+  <customwidget>
+   <class>PushButton</class>
+   <extends>QPushButton</extends>
+   <header>qfluentwidgets</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="../Pictures/picture.qrc"/>
+  <include location="../resource.qrc"/>
  </resources>
  <connections/>
 </ui>
