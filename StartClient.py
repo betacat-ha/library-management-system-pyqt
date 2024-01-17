@@ -240,19 +240,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
             if verify:
                 self.LoginAdmin.lineEdit.clear()
                 self.LoginAdmin.lineEdit_2.clear()
-
-                self.Admin.lineEdit_16.setText(userName)
-                self.Admin.lineEdit_17.setText(password)
-                self.Admin.lineEdit_14.setText(userName)
-                self.Admin.lineEdit_15.setText(password)
-                self.Admin.lineEdit_12.setText(userName)
-                self.Admin.lineEdit_13.setText(password)
-                self.Admin.lineEdit_18.setText(userName)
-                self.Admin.lineEdit_19.setText(password)
-                # self.Admin.lineEdit_8.setText(userName)
-                # self.Admin.lineEdit_6.setText(password)
-                # self.Admin.lineEdit_9.setText(userName)
-                # self.Admin.lineEdit_7.setText(password)
                 self.Admin.show()
                 self.LoginAdmin.close()
             else:
