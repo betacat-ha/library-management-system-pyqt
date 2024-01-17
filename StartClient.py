@@ -17,7 +17,7 @@ from Frontend.Register import Ui_Register
 from Backend.Lib_DB import Database
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
-                            NavigationAvatarWidget,  SplitFluentWindow, FluentTranslator)
+                            NavigationAvatarWidget, SplitFluentWindow, FluentTranslator)
 from qfluentwidgets import FluentIcon
 import time
 
@@ -48,8 +48,9 @@ class ReaderIn(SplitFluentWindow):
         self.navigationInterface.addItem(
             routeKey='settingInterface',
             icon=FluentIcon.POWER_BUTTON,
-            text='注销',
+            text='退出登录',
             position=NavigationItemPosition.BOTTOM,
+            onClick=self.close
         )
 
     def initWindow(self):
@@ -59,7 +60,7 @@ class ReaderIn(SplitFluentWindow):
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
-        self.move(w//2 - self.width()//2, h//2 - self.height()//2)
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
     def reset(self):
         self.lineEdit.clear()
@@ -67,6 +68,7 @@ class ReaderIn(SplitFluentWindow):
         self.lineEdit_3.clear()
         self.lineEdit_4.clear()
         self.lineEdit_5.clear()
+
 
 # 超管界面
 class SupAD(Ui_SuperAD):
@@ -659,15 +661,15 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                         ui.bookList.setItem(currentRowCount, 1, QTableWidgetItem(line[2]))
                         if str(line[3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
                             ui.bookList.setItem(currentRowCount, 2,
-                                                            QTableWidgetItem(
-                                                                str(line[3].strftime('%Y-%m-%d')).split("-")[
-                                                                    0]))
+                                                QTableWidgetItem(
+                                                    str(line[3].strftime('%Y-%m-%d')).split("-")[
+                                                        0]))
                         else:
                             ui.bookList.setItem(currentRowCount, 2,
-                                                            QTableWidgetItem(
-                                                                str(line[3].strftime('%Y-%m-%d'))))
+                                                QTableWidgetItem(
+                                                    str(line[3].strftime('%Y-%m-%d'))))
                         ui.bookList.setItem(currentRowCount, 3,
-                                                        QTableWidgetItem(str(line[1])))
+                                            QTableWidgetItem(str(line[1])))
                         ui.bookList.setEditTriggers(QAbstractItemView.NoEditTriggers)
                     QMessageBox.information(self.Reader, '通知',
                                             '查询完毕！查询用时：%4f s' % timelen)
@@ -819,7 +821,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
             except Exception as e:
                 print(e)
 
-
     # 实现借书
     def borrow_book(self):
         ui = self.Reader.readerBorrowReturn
@@ -913,7 +914,6 @@ class LoginReader(FramelessWindow, Ui_LoginReader):
 
         # 设置标题栏
         self.setTitleBar(StandardTitleBar(self))
-
 
     def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
         if self._tracking:
