@@ -54,7 +54,6 @@ class ReaderIn(SplitFluentWindow):
         )
 
     def initWindow(self):
-        self.resize(900, 700)
         self.setWindowTitle('读者界面')
         self.setWindowIcon(QIcon(':/images/logo.png'))
 
@@ -62,12 +61,7 @@ class ReaderIn(SplitFluentWindow):
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
-    def reset(self):
-        self.lineEdit.clear()
-        self.lineEdit_2.clear()
-        self.lineEdit_3.clear()
-        self.lineEdit_4.clear()
-        self.lineEdit_5.clear()
+        self.resize((int)(desktop.width() * 0.8), (int)(desktop.height() * 0.8))
 
 
 # 超管界面
