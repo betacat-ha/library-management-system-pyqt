@@ -13,6 +13,9 @@ from Frontend.LoginAdmin import Ui_LoginAdmin
 from Frontend.LoginReader import Ui_LoginReader
 from Frontend.LoginSuper import Ui_LoginSuper
 from Frontend.Admin import Ui_Admin
+from Frontend.admin.admin_search_reader import AdminSearchReader
+from Frontend.admin.admin_add_book import AdminAddBook
+from Frontend.admin.admin_modify_book import AdminModifyBook
 from Frontend.MainWin import Ui_MainWin
 from Frontend.Register import Ui_Register
 from Backend.Lib_DB import Database
@@ -101,56 +104,44 @@ class SupAD(SplitFluentWindow):
 
 
 # 管理员界面
-class AdminGUI(QWidget, Ui_Admin):
-    def __init__(self, parent=None):
-        super(AdminGUI, self).__init__(parent)
+class AdminGUI(SplitFluentWindow):
+    def __init__(self):
+        super().__init__()
 
-        self.setupUi(self)
+        self.database = Database()
 
-        # 实现按下按钮跳转窗口的功能
-        self.pushButton_8.clicked.connect(self.display)  # 添加图书
-        self.pushButton_9.clicked.connect(self.display)  # 书刊查找
-        self.pushButton_18.clicked.connect(self.display)  # 修改图书信息
-        self.pushButton_19.clicked.connect(self.display)  # 浏览图书信息
-        self.pushButton_21.clicked.connect(self.display)  # 查看读者信息
-        self.pushButton_20.clicked.connect(self.close)  # 注销账号
-        self.Stack = self.stackedWidget
+        self.adminSearchReader = AdminSearchReader(self, self.database)
+        self.adminAddBook = AdminAddBook(self, self.database)
+        self.adminModifyBook = AdminModifyBook(self, self.database)
+        self.readerSearchBook = ReaderSearchBook(self)
 
-        self.Cancel_3.clicked.connect(self.display)
+        self.initNavigation()
+        self.initWindow()
 
-        self.Cancel_2.clicked.connect(self.display)
+    def initNavigation(self):
+        # add sub interface
+        self.addSubInterface(self.readerSearchBook, FluentIcon.SEARCH, '书刊查找')
+        self.addSubInterface(self.adminAddBook, FluentIcon.ADD, '添加图书')
+        self.addSubInterface(self.adminModifyBook, FluentIcon.EDIT, '修改图书信息')
+        self.addSubInterface(self.adminSearchReader, FluentIcon.PEOPLE, '查看读者信息')
 
-        self.Cancel_4.clicked.connect(self.display)
 
-        # self.Cancel_5.clicked.connect(self.display)
+        self.navigationInterface.addItem(
+            routeKey='settingInterface',
+            icon=FluentIcon.POWER_BUTTON,
+            text='退出登录',
+            position=NavigationItemPosition.BOTTOM,
+            onClick=self.close
+        )
 
-        self.lineEdit_16.setReadOnly(True)
-        self.lineEdit_17.setReadOnly(True)
-        self.lineEdit_14.setReadOnly(True)
-        self.lineEdit_15.setReadOnly(True)
-        self.lineEdit_12.setReadOnly(True)
-        self.lineEdit_13.setReadOnly(True)
-        self.lineEdit_18.setReadOnly(True)
-        self.lineEdit_19.setReadOnly(True)
-        self.lineEdit_8.setReadOnly(True)
-        self.lineEdit_6.setReadOnly(True)
-        self.lineEdit_9.setReadOnly(True)
-        self.lineEdit_7.setReadOnly(True)
+    def initWindow(self):
+        self.setWindowTitle('管理员界面')
+        self.setWindowIcon(QIcon(':/images/logo.png'))
 
-    def display(self):
-        sender = self.sender()
-        if sender.text() == "添加图书":
-            self.Stack.setCurrentIndex(1)
-        elif sender.text() == "书刊查找":
-            self.Stack.setCurrentIndex(2)
-        elif sender.text() == "修改图书信息":
-            self.Stack.setCurrentIndex(3)
-        elif sender.text() == "浏览图书信息":
-            self.Stack.setCurrentIndex(4)
-        elif sender.text() == "查看读者信息":
-            self.Stack.setCurrentIndex(5)
-        elif sender.text() == "取消":
-            self.Stack.setCurrentIndex(0)
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.resize((int)(w * 0.8), (int)(h * 0.9))
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
 
 # 主界面
@@ -178,13 +169,10 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         self.LoginAdmin.pushButton.clicked.connect(self.EnterAdmin)
         self.LoginSuper.pushButton.clicked.connect(self.EnterSuper)
         self.LoginReader.pushButton.clicked.connect(self.EnterReader)
-        # self.LoginReader.pushButton_3.clicked.connect(self.displayRegister)
-        self.Admin.Confirm_3.clicked.connect(self.add_book)
-        self.Admin.pushButton_19.clicked.connect(self.browse_book)
-        self.Admin.pushButton_21.clicked.connect(self.browse_reader)
-        self.Admin.Confirm_2.clicked.connect(self.find_book)
-        self.Admin.Confirm_4.clicked.connect(self.check_book)
-        # self.Admin.Confirm_5.clicked.connect(self.modify_book)
+        # self.Admin.pushButton_19.clicked.connect(self.browse_book)
+        # self.Admin.pushButton_21.clicked.connect(self.browse_reader)
+        # self.Admin.Confirm_2.clicked.connect(self.find_book)
+        # self.Admin.searc.clicked.connect(self.check_book)
         # self.Admin.Confirm_6.clicked.connect(self.delete_book)
         self.Super.superadminSearch.adminSearchEdit.searchSignal.connect(self.find_admin)
         self.Super.superadminAddAdmin.finshButton.clicked.connect(self.add_admin)
@@ -304,70 +292,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
     def displayRegister(self, type):
         self.Register.show()
 
-    def browse_book(self):
-        books = self.Lib_DB.show_book()
-        if not len(books) == 0:
-            try:
-                self.Admin.tableWidget_4.clearContents()
-                self.Admin.tableWidget_4.setRowCount(0)
-                self.borrowedcount = 0
-                self.totalbook = 0
-                currentRowCount = 0
-                for line in books:
-                    currentRowCount = self.Admin.tableWidget_4.rowCount()
-                    self.Admin.tableWidget_4.insertRow(currentRowCount)
-                    self.Admin.tableWidget_4.setItem(currentRowCount, 0, QTableWidgetItem(line['name']))
-                    self.Admin.tableWidget_4.setItem(currentRowCount, 1, QTableWidgetItem(str(line['id'])))
-                    self.Admin.tableWidget_4.setItem(currentRowCount, 2, QTableWidgetItem(line['author']))
-                    if str(line['pubdate'].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                        self.Admin.tableWidget_4.setItem(currentRowCount, 3,
-                                                         QTableWidgetItem(
-                                                             str(line['pubdate'].strftime('%Y-%m-%d')).split("-")[0]))
-                    else:
-                        self.Admin.tableWidget_4.setItem(currentRowCount, 3,
-                                                         QTableWidgetItem(str(line['pubdate'].strftime('%Y-%m-%d'))))
-                    if line['rent_stu_id'] == -1:
-                        self.Admin.tableWidget_4.setItem(currentRowCount, 4, QTableWidgetItem("暂未借出"))
-                    else:
-                        self.borrowedcount += 1
-                        self.Admin.tableWidget_4.setItem(currentRowCount, 4, QTableWidgetItem(str(line['rent_stu_id'])))
-                    self.Admin.tableWidget_4.setEditTriggers(QAbstractItemView.NoEditTriggers)
-                print("浏览图书成功")
-                self.totalbook = currentRowCount + 1
-                self.Admin.lineEdit_9.setText(str(self.totalbook))
-                self.Admin.lineEdit_7.setText(str(self.borrowedcount))
-                self.Admin.lineEdit_6.setText(str(self.borrowedcount))
-            except Exception as e:
-                print(e)
-        else:
-            QMessageBox.warning(self.Admin, '警告', '暂无图书信息！')
-
-    def browse_reader(self):
-        readers = self.Lib_DB.show_reader()
-        print(readers)
-        if not len(readers) == 0:
-            try:
-                self.totalreader = 0
-                self.Admin.tableWidget_3.clearContents()
-                self.Admin.tableWidget_3.setRowCount(0)
-                currentRowCount = 0
-                for line in readers:
-                    currentRowCount = self.Admin.tableWidget_3.rowCount()
-                    self.Admin.tableWidget_3.insertRow(currentRowCount)
-                    self.Admin.tableWidget_3.setItem(currentRowCount, 0, QTableWidgetItem(line['stu_user']))
-                    self.Admin.tableWidget_3.setItem(currentRowCount, 1, QTableWidgetItem(str(line['stu_password'])))
-                    self.Admin.tableWidget_3.setItem(currentRowCount, 2, QTableWidgetItem(line['stu_name']))
-                    self.Admin.tableWidget_3.setItem(currentRowCount, 3, QTableWidgetItem(str(line['stu_id'])))
-                    self.Admin.tableWidget_3.setItem(currentRowCount, 4, QTableWidgetItem(line['stu_dep']))
-                    self.Admin.tableWidget_3.setEditTriggers(QAbstractItemView.NoEditTriggers)
-                print("浏览读者成功")
-                self.totalreader = currentRowCount + 1
-                self.Admin.lineEdit_8.setText(str(self.totalreader))
-            except Exception as e:
-                print(e)
-        else:
-            QMessageBox.warning(self.Admin, '警告', '暂无读者信息！')
-
     def find_book(self):
         name = self.Admin.Name_2.text()  # 获取书名
         index = self.Admin.User_3.text()  # 获取索引号
@@ -445,38 +369,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                                     '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
                 print(e)
 
-    def add_book(self):
-        name = self.Admin.Name_3.text()  # 获取书名
-        index = self.Admin.User_5.text()  # 获取索引号
-        author = self.Admin.User_6.text()  # 获取作者
-        pubdate = self.Admin.Port_3.text()  # 获取出版时间
-        splitdate = pubdate.split('-')
 
-        if len(name) == 0 or len(index) == 0 or len(author) == 0 or len(pubdate) == 0:
-            QMessageBox.warning(self.Admin, 'warning', '请补书籍信息！')
-        else:
-            if not index.isdigit():
-                QMessageBox.warning(self.Admin, 'warning', '索引号格式错误！')
-            elif not len(splitdate) == 3:
-                QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-            elif splitdate[0].isdigit() and splitdate[1].isdigit() and splitdate[2].isdigit():
-                if int(splitdate[0]) in range(0, 2023) and int(splitdate[1]) in range(1, 13) and int(
-                        splitdate[2]) in range(1, 32):
-                    new_book = {'id': index, 'name': name, 'author': author, 'pubdate': pubdate}
-                    try:
-                        self.Lib_DB.insert_book(new_book)
-                        QMessageBox.information(self.Admin, '通知', '添加图书成功！')
-                        self.Admin.Name_3.clear()
-                        self.Admin.User_5.clear()
-                        self.Admin.User_6.clear()
-                        self.Admin.Port_3.clear()
-                    except Exception as e:
-                        print(e)
-                        QMessageBox.warning(self.Admin, 'warning', '索引已存在！')
-                else:
-                    QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-            else:
-                QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
 
     def check_book(self):
         name = self.Admin.Name_4.text()  # 获取书名
@@ -533,52 +426,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 QMessageBox.warning(self.Admin, 'warning',
                                     '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
                 print(e)
-
-    def modify_book(self):
-        name = self.Admin.Name_5.text()  # 获取书名
-        index = self.Admin.User_9.text()  # 获取索引号
-        author = self.Admin.User_10.text()  # 获取作者
-        pubdate = self.Admin.Port_5.text()  # 获取出版时间
-        splitdate = pubdate.split('-')
-        oldname = self.Admin.lineEdit.text()
-        oldauthor = self.Admin.lineEdit_3.text()
-        oldpubdate = self.Admin.lineEdit_4.text()
-        if name == oldname and author == oldauthor and pubdate == oldpubdate:
-            QMessageBox.warning(self.Admin, 'warning', '请至少修改一项信息！')
-            return
-        if len(name) == 0 or len(author) == 0 or len(pubdate) == 0:
-            QMessageBox.warning(self.Admin, 'warning', '请补全图书信息！')
-            return
-        else:
-            if not len(splitdate) == 3:
-                QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-                return
-            elif splitdate[0].isdigit() and splitdate[1].isdigit() and splitdate[2].isdigit():
-                if int(splitdate[0]) in range(0, 2023) and int(splitdate[1]) in range(1, 13) and int(
-                        splitdate[2]) in range(1, 32):
-                    modified_book = {'id': index, 'name': name, 'author': author, 'pubdate': pubdate}
-                    reply = QMessageBox.question(self.Admin,
-                                                 '询问',
-                                                 "确定要修改该图书吗？",
-                                                 QMessageBox.Yes | QMessageBox.No,
-                                                 QMessageBox.No)
-                    if reply == QMessageBox.Yes:
-                        try:
-                            self.Lib_DB.book_modify(modified_book)
-                            self.Admin.lineEdit.clear()
-                            self.Admin.lineEdit_2.clear()
-                            self.Admin.lineEdit_3.clear()
-                            self.Admin.lineEdit_4.clear()
-                            self.Admin.Name_5.clear()
-                            self.Admin.User_9.clear()
-                            self.Admin.User_10.clear()
-                            self.Admin.Port_5.clear()
-                            QMessageBox.information(self.Admin, '通知', '修改图书成功！')
-                            self.Admin.stackedWidget.setCurrentIndex(0)
-                        except Exception as e:
-                            print(e)
-                    else:
-                        pass
 
     # 实现读者信息修改
     def modify_reader(self):
@@ -1005,6 +852,6 @@ if __name__ == "__main__":
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 
     app = QApplication(sys.argv)
-    stats = MainWin()
+    stats = AdminGUI()
     stats.show()
     sys.exit(app.exec())
