@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AdminAddBook</class>
- <widget class="QWidget" name="AdminAddBook">
+ <class>SuperadminDeleteAdmin</class>
+ <widget class="QWidget" name="SuperadminDeleteAdmin">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>911</width>
-    <height>807</height>
+    <width>490</width>
+    <height>413</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>书刊查找</string>
+   <string>删除管理员</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="topMargin">
@@ -22,7 +22,7 @@
      <item>
       <widget class="TitleLabel" name="TitleLabel">
        <property name="text">
-        <string>添加图书</string>
+        <string>删除管理员</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -61,49 +61,7 @@
                </font>
               </property>
               <property name="text">
-               <string>书   名：</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_12">
-              <property name="font">
-               <font>
-                <family>Microsoft YaHei</family>
-                <pointsize>10</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>索引号：</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_13">
-              <property name="font">
-               <font>
-                <family>Microsoft YaHei</family>
-                <pointsize>10</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>作   者：</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_14">
-              <property name="font">
-               <font>
-                <family>Microsoft YaHei</family>
-                <pointsize>10</pointsize>
-                <bold>false</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>出版时间：</string>
+               <string>管理员工号：</string>
               </property>
              </widget>
             </item>
@@ -115,26 +73,16 @@
              <widget class="LineEdit" name="bookTitle"/>
             </item>
             <item>
-             <widget class="LineEdit" name="bookIndex"/>
-            </item>
-            <item>
-             <widget class="LineEdit" name="bookAuthor"/>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <widget class="LineEdit" name="publishYear"/>
-              </item>
-             </layout>
+             <layout class="QHBoxLayout" name="horizontalLayout_5"/>
             </item>
            </layout>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="8,0">
+         <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0,0">
           <item>
-           <spacer name="horizontalSpacer_2">
+           <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -147,17 +95,36 @@
            </spacer>
           </item>
           <item>
-           <widget class="PrimaryPushButton" name="addButton">
+           <widget class="PrimaryPushButton" name="finshButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>2</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="text">
-             <string>添加</string>
+             <string>完成</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
