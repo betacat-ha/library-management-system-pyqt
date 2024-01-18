@@ -1,6 +1,9 @@
 <RCC>
   <qresource>
-    <file>images/background.jpg</file>
+    <file>images/avatar.png</file>
+    <file>images/library-1.png</file>
+    <file>images/library-3.png</file>
+    <file>images/library-4.png</file>
     <file>images/logo.png</file>
     <file>images/todo.png</file>
     <file>images/alarms.png</file>
