@@ -467,7 +467,7 @@ class Database:
         connection = pymysql.connect(host=self.host, user=self.user, password=self.password, database=self.database,
                                      port=self.port,
                                      charset=self.charset)
-        cur = connection.cursor()
+        cur = connection.cursor(cursor=pymysql.cursors.DictCursor)
         sql = "select * from lib_admin where admin_id = '%s'" % id
         try:
             # 执行sql语句

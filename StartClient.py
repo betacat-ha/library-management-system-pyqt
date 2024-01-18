@@ -68,12 +68,12 @@ class ReaderIn(SplitFluentWindow):
 
 # 超管界面
 class SupAD(SplitFluentWindow):
-    def __init__(self):
+    def __init__(self, database=None):
         super().__init__()
 
         self.superadminAddAdmin = SuperadminAddAdmin(self)
         self.superadminDeleteAdmin = SuperadminDeleteAdmin(self)
-        self.superadminSearch = SuperadminSearch(self)
+        self.superadminSearch = SuperadminSearch(self, database)
 
         self.initNavigation()
         self.initWindow()
@@ -160,30 +160,23 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         self.LoginAdmin = LoginAdmin()
         self.LoginReader = LoginReader()
         self.LoginSuper = LoginSuper()
-        self.Super = SupAD()
+        self.Super = SupAD(self.Lib_DB)
         self.Reader = ReaderIn(self.Lib_DB)
         self.Register = Register()
         self.LoginAdmin.pushButton.clicked.connect(self.EnterAdmin)
         self.LoginSuper.pushButton.clicked.connect(self.EnterSuper)
         self.LoginReader.pushButton.clicked.connect(self.EnterReader)
-        # self.Admin.pushButton_19.clicked.connect(self.browse_book)
-        # self.Admin.pushButton_21.clicked.connect(self.browse_reader)
-        # self.Admin.Confirm_2.clicked.connect(self.find_book)
-        # self.Admin.searc.clicked.connect(self.check_book)
         # self.Admin.Confirm_6.clicked.connect(self.delete_book)
-        self.Super.superadminSearch.adminSearchEdit.searchSignal.connect(self.find_admin)
         self.Super.superadminAddAdmin.finshButton.clicked.connect(self.add_admin)
         self.Super.superadminDeleteAdmin.finshButton.clicked.connect(self.delete_admin)
         self.Register.pushButton.clicked.connect(self.add_reader)
         self.Reader.readerInfoModify.confirm.clicked.connect(self.modify_reader)
         self.Reader.readerBorrowReturn.borrowButton.clicked.connect(self.borrow_book)
         self.Reader.readerBorrowReturn.returnButton.clicked.connect(self.return_book)
-        # self.Reader.commandLinkButton_5.clicked.connect(self.displayRentBorrow)  # 借书还书界面
         self.CurrentReader = -1
 
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()
-        # self.resize((int)(w * 0.8), (int)(h * 0.9))
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
 
@@ -256,6 +249,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
             QMessageBox.warning(self.LoginSuper, 'warning', '请补全用户名或密码！')
         elif userName == SuperUser and password == SuperPassword:
             self.Super.show()
+            self.Super.superadminSearch.find_admin()
             self.LoginSuper.close()
         else:
             QMessageBox.warning(self.LoginSuper, 'warning', '未找到该管理员！')
@@ -355,51 +349,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 ui.adminId.clear()
                 ui.adminName.clear()
                 ui.adminPassword.clear()
-            except Exception as e:
-                print(e)
-
-    # 实现查找管理员
-    def find_admin(self):
-        ui = self.Super.superadminSearch
-        id = ui.adminSearchEdit.text()
-        if len(id) == 0:
-            admins = self.Lib_DB.show_admin()
-            print(admins)
-            if not len(admins) == 0:
-                try:
-                    ui.adminList.clearContents()
-                    ui.adminList.setRowCount(0)
-                    for line in admins:
-                        currentRowCount = ui.adminList.rowCount()
-                        ui.adminList.insertRow(currentRowCount)
-                        ui.adminList.setItem(currentRowCount, 0, QTableWidgetItem(str(line['admin_id'])))
-                        ui.adminList.setItem(currentRowCount, 1, QTableWidgetItem(line['admin_user']))
-                        ui.adminList.setItem(currentRowCount, 2, QTableWidgetItem(line['admin_password']))
-                        ui.adminList.setEditTriggers(QAbstractItemView.NoEditTriggers)
-                    print("浏览管理员成功")
-                except Exception as e:
-                    print(e)
-            else:
-                QMessageBox.warning(self.Super, '警告', '暂无管理员信息！')
-
-        elif not id.isdigit():
-            QMessageBox.warning(self.Super, '警告', '管理员工号格式错误！')
-            return
-        else:
-            try:
-                results = self.Lib_DB.search_admin(id)
-                if len(results) == 0:
-                    QMessageBox.warning(self.Super, '警告', '未找到管理员，请检查工号是否正确！')
-                    return
-                else:
-                    ui.adminList.clearContents()
-                    ui.adminList.setRowCount(0)
-                    currentRowCount = ui.adminList.rowCount()
-                    ui.adminList.insertRow(currentRowCount)
-                    ui.adminList.setItem(currentRowCount, 0, QTableWidgetItem(str(results[0][1])))
-                    ui.adminList.setItem(currentRowCount, 1, QTableWidgetItem(results[0][0]))
-                    ui.adminList.setItem(currentRowCount, 2, QTableWidgetItem(results[0][2]))
-                    ui.adminList.setEditTriggers(QAbstractItemView.NoEditTriggers)
             except Exception as e:
                 print(e)
 
