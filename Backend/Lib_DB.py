@@ -336,21 +336,21 @@ class Database:
         neardate = book['neardate']
         if id == -1:
             if not len(name) == 0 and len(author) == 0 and len(fardate) == 0 and len(neardate) == 0:
-                sql = "select * from lib_book where name = '%s'" % name
+                sql = "select * from lib_book where name like '%" + name +"%'"
             elif len(name) == 0 and not len(author) == 0 and len(fardate) == 0 and len(neardate) == 0:
-                sql = "select * from lib_book where author = '%s'" % author
+                sql = "select * from lib_book where author like '%" + author +"%'"
             elif len(name) == 0 and len(author) == 0 and not len(fardate) == 0 and not len(neardate) == 0:
                 sql = "select * from lib_book where pubdate between '%s' and '%s'" % (fardate, neardate)
             elif not len(name) == 0 and not len(author) == 0 and len(fardate) == 0 and len(neardate) == 0:
-                sql = "select * from lib_book where name = '%s' and author = '%s'" % (name, author)
+                sql = "select * from lib_book where name like '%" + name + "%' and author like '%" + author +"%'"
             elif not len(name) == 0 and len(author) == 0 and not len(fardate) == 0 and not len(neardate) == 0:
-                sql = "select * from lib_book where name = '%s' and pubdate between '%s' and '%s'" % (
+                sql = "select * from lib_book where name like '%" + name + "%' and pubdate between '%s' and '%s'" % (
                     name, fardate, neardate)
             elif len(name) == 0 and not len(author) == 0 and not len(fardate) == 0 and not len(neardate) == 0:
-                sql = "select * from lib_book where author = '%s' pubdate between '%s' and '%s'" % (
+                sql = "select * from lib_book where author like '%" + author +"%' pubdate between '%s' and '%s'" % (
                     author, fardate, neardate)
             elif not len(name) == 0 and not len(author) == 0 and not len(fardate) == 0 and not len(neardate) == 0:
-                sql = "select * from lib_book where name = '%s' and author = '%s' and pubdate between '%s' and '%s'" % (
+                sql = "select * from lib_book where name like '%" + name + "%' and author like '%" + author +"%' and pubdate between '%s' and '%s'" % (
                     name, author, fardate, neardate)
             else:
                 print("查找格式错误")
@@ -468,7 +468,7 @@ class Database:
                                      port=self.port,
                                      charset=self.charset)
         cur = connection.cursor(cursor=pymysql.cursors.DictCursor)
-        sql = "select * from lib_admin where admin_id = '%s'" % id
+        sql = "select * from lib_admin where admin_id like '%" + id + "%'"
         try:
             # 执行sql语句
             cur.execute(sql)
