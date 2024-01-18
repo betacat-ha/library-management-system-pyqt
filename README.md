@@ -1,5 +1,5 @@
 # 图书管理系统
-<img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux%20|%20macOS-blue?color=#4ec820" alt="Platform Win32 | Linux | macOS"><img src="https://img.shields.io/badge/License-GPLv3-blue?color=#4ec820" alt="GPLv3">
+<img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux%20|%20macOS-blue?color=#4ec820" alt="Platform Win32 | Linux | macOS"><img src="https://img.shields.io/badge/License-MIT-blue?color=#4ec820" alt="MIT">
 
 本项目基于[WHU_DB 资料管理系统](https://github.com/JOETtheIV/WHU_DB)，重构了部分代码，并重新绘制了UI
 
