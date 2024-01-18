@@ -19,8 +19,8 @@
 
  通过登录超级管理员界面创建管理员，通过登录读者界面可以注册读者
 
-![CleanShot 2024-01-18 at 12.45.05@2x](README.assets/CleanShot 2024-01-18 at 12.45.05@2x.png)
-![CleanShot 2024-01-18 at 12.45.11@2x](README.assets/CleanShot 2024-01-18 at 12.45.11@2x.png)
-![CleanShot 2024-01-18 at 12.46.05@2x](README.assets/CleanShot 2024-01-18 at 12.46.05@2x.png)
-![CleanShot 2024-01-18 at 12.46.05@2x](README.assets/CleanShot 2024-01-18 at 12.50.06@2x.png)
+![CleanShot 2024-01-18 at 12.45.05@2x](https://gitee.com/BetaCat_HA/library-management-system-pyqt/raw/main/README.assets/CleanShot%202024-01-18%20at%2012.45.05@2x.png)
+![CleanShot 2024-01-18 at 12.45.11@2x](https://gitee.com/BetaCat_HA/library-management-system-pyqt/raw/main/README.assets/CleanShot%202024-01-18%20at%2012.45.11@2x.png)
+![CleanShot 2024-01-18 at 12.46.05@2x](https://gitee.com/BetaCat_HA/library-management-system-pyqt/raw/main/README.assets/CleanShot%202024-01-18%20at%2012.46.05@2x.png)
+![CleanShot 2024-01-18 at 12.46.05@2x](https://gitee.com/BetaCat_HA/library-management-system-pyqt/raw/main/README.assets/CleanShot%202024-01-18%20at%2012.50.06@2x.png)
 
