@@ -147,7 +147,7 @@ class Database:
                                      port=self.port,
                                      charset=self.charset)
         # 获取游标 对数据库进行操作 并且将返回值设置为字典类型
-        cur = connection.cursor(cursor=pymysql.cursors.DictCursor)
+        cur = connection.cursor()
         # 写sql语句
         sql = "select * from lib_book"
         try:
@@ -158,7 +158,7 @@ class Database:
                 如果有记录，则结果是list类型，所以可以根据类型来判断数据库是否为空，
                 如果不是就返回一个空列表。
             """
-            if type(books) == list:
+            if not len(books) == 0:
                 print("成功获取lib_book中数据！")
                 return books
             else:

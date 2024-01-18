@@ -12,7 +12,6 @@ from Frontend.reader.reader_info_modify import ReaderInfoModify
 from Frontend.LoginAdmin import Ui_LoginAdmin
 from Frontend.LoginReader import Ui_LoginReader
 from Frontend.LoginSuper import Ui_LoginSuper
-from Frontend.Admin import Ui_Admin
 from Frontend.admin.admin_search_reader import AdminSearchReader
 from Frontend.admin.admin_add_book import AdminAddBook
 from Frontend.admin.admin_modify_book import AdminModifyBook
@@ -31,11 +30,11 @@ SuperPassword = '123'  # 超级管理员密码
 
 # 读者界面
 class ReaderIn(SplitFluentWindow):
-    def __init__(self):
+    def __init__(self, database=None):
         super().__init__()
 
-        self.readerSearchBook = ReaderSearchBook(self)
-        self.readerBorrowReturn = ReaderBorrowReturn(self)
+        self.readerSearchBook = ReaderSearchBook(self, database)
+        self.readerBorrowReturn = ReaderBorrowReturn(self, database)
         self.readerInfoModify = ReaderInfoModify(self)
         # self.myPage = MyPage(self)
 
@@ -105,15 +104,13 @@ class SupAD(SplitFluentWindow):
 
 # 管理员界面
 class AdminGUI(SplitFluentWindow):
-    def __init__(self):
+    def __init__(self, database=None):
         super().__init__()
 
-        self.database = Database()
-
-        self.adminSearchReader = AdminSearchReader(self, self.database)
-        self.adminAddBook = AdminAddBook(self, self.database)
-        self.adminModifyBook = AdminModifyBook(self, self.database)
-        self.readerSearchBook = ReaderSearchBook(self)
+        self.adminSearchReader = AdminSearchReader(self, database)
+        self.adminAddBook = AdminAddBook(self, database)
+        self.adminModifyBook = AdminModifyBook(self, database)
+        self.readerSearchBook = ReaderSearchBook(self, database)
 
         self.initNavigation()
         self.initWindow()
@@ -158,14 +155,14 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         self.pushButton_6.clicked.connect(self.displayAdmin)
         self.pushButton_5.clicked.connect(self.displaySuper)
         self.pushButton_4.clicked.connect(self.close)
-        self.Admin = AdminGUI()
+        self.Lib_DB = Database()
+        self.Admin = AdminGUI(self.Lib_DB)
         self.LoginAdmin = LoginAdmin()
         self.LoginReader = LoginReader()
         self.LoginSuper = LoginSuper()
         self.Super = SupAD()
-        self.Reader = ReaderIn()
+        self.Reader = ReaderIn(self.Lib_DB)
         self.Register = Register()
-        self.Lib_DB = Database()
         self.LoginAdmin.pushButton.clicked.connect(self.EnterAdmin)
         self.LoginSuper.pushButton.clicked.connect(self.EnterSuper)
         self.LoginReader.pushButton.clicked.connect(self.EnterReader)
@@ -178,7 +175,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
         self.Super.superadminAddAdmin.finshButton.clicked.connect(self.add_admin)
         self.Super.superadminDeleteAdmin.finshButton.clicked.connect(self.delete_admin)
         self.Register.pushButton.clicked.connect(self.add_reader)
-        self.Reader.readerSearchBook.searchButton.clicked.connect(self.reader_find_book)
         self.Reader.readerInfoModify.confirm.clicked.connect(self.modify_reader)
         self.Reader.readerBorrowReturn.borrowButton.clicked.connect(self.borrow_book)
         self.Reader.readerBorrowReturn.returnButton.clicked.connect(self.return_book)
@@ -247,6 +243,7 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 self.LoginAdmin.lineEdit.clear()
                 self.LoginAdmin.lineEdit_2.clear()
                 self.Admin.show()
+                self.Admin.readerSearchBook.search_all_book()
                 self.LoginAdmin.close()
             else:
                 QMessageBox.warning(self.LoginAdmin, 'warning', '工号或密码错误，请检查！')
@@ -278,147 +275,13 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 self.CurrentReader = userName
                 self.Reader.show()
                 self.Reader.readerBorrowReturn.refresh_rent_book_list(self.CurrentReader)
+                self.Reader.readerSearchBook.search_all_book()
                 self.LoginReader.close()
             else:
                 QMessageBox.warning(self.LoginReader, 'warning', '学号或密码错误！')
 
     def displayRegister(self, type):
         self.Register.show()
-
-    def find_book(self):
-        name = self.Admin.Name_2.text()  # 获取书名
-        index = self.Admin.User_3.text()  # 获取索引号
-        author = self.Admin.User_4.text()  # 获取作者
-        pubdate = self.Admin.Port_2.text()  # 获取出版时间
-        splitdate = pubdate.split('-')
-        timelen = 0.0
-        if len(name) == 0 and len(index) == 0 and len(author) == 0 and len(pubdate) == 0:
-            QMessageBox.warning(self.Admin, 'warning', '请填写至少一项信息！')
-            return
-        else:
-            if not len(index) == 0:
-                if not index.isdigit():
-                    QMessageBox.warning(self.Admin, 'warning', '索引号格式错误！')
-                    return
-            if len(index) == 0:
-                index = -1
-            if not len(pubdate) == 0:
-                if not len(splitdate) == 3:
-                    QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-                    return
-                elif splitdate[0].isdigit() and splitdate[1].isdigit() and splitdate[2].isdigit():
-                    if not int(splitdate[0]) in range(0, 2023) or not int(splitdate[1]) in range(1, 13) or not int(
-                            splitdate[2]) in range(1, 32):
-                        QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-                        return
-                else:
-                    QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-                    return
-            try:
-                searched_book = {'id': index, 'name': name, 'author': author, 'pubdate': pubdate}
-                print(searched_book)
-                # print(222)
-                st = time.time()
-                results = self.Lib_DB.search_book(searched_book)
-                timelen = time.time() - st
-                # print(timelen)
-                if len(results) == 0:
-                    QMessageBox.warning(self.Admin, 'warning',
-                                        '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
-                else:
-                    self.Admin.Name_2.clear()
-                    self.Admin.User_3.clear()
-                    self.Admin.User_4.clear()
-                    self.Admin.Port_2.clear()
-                    self.Admin.stackedWidget.setCurrentIndex(6)
-                    self.Admin.tableWidget_5.clearContents()
-                    self.Admin.tableWidget_5.setRowCount(0)
-
-                    for line in results:
-                        currentRowCount = self.Admin.tableWidget_5.rowCount()
-                        self.Admin.tableWidget_5.insertRow(currentRowCount)
-                        self.Admin.tableWidget_5.setItem(currentRowCount, 0, QTableWidgetItem(line[0]))
-                        self.Admin.tableWidget_5.setItem(currentRowCount, 1, QTableWidgetItem(str(line[1])))
-                        self.Admin.tableWidget_5.setItem(currentRowCount, 2, QTableWidgetItem(line[2]))
-                        if str(line[3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                            self.Admin.tableWidget_5.setItem(currentRowCount, 3,
-                                                             QTableWidgetItem(
-                                                                 str(line[3].strftime('%Y-%m-%d')).split("-")[
-                                                                     0]))
-                        else:
-                            self.Admin.tableWidget_5.setItem(currentRowCount, 3,
-                                                             QTableWidgetItem(
-                                                                 str(line[3].strftime('%Y-%m-%d'))))
-                        if line[4] == -1:
-                            self.Admin.tableWidget_5.setItem(currentRowCount, 4, QTableWidgetItem("暂未借出"))
-                        else:
-                            self.Admin.tableWidget_5.setItem(currentRowCount, 4,
-                                                             QTableWidgetItem(str(line[4])))
-                        self.Admin.tableWidget_5.setEditTriggers(QAbstractItemView.NoEditTriggers)
-                    QMessageBox.information(self.Admin, '通知',
-                                            '查询完毕！查询用时：%4f s' % timelen)
-            except Exception as e:
-                QMessageBox.warning(self.Admin, 'warning',
-                                    '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
-                print(e)
-
-
-
-    def check_book(self):
-        name = self.Admin.Name_4.text()  # 获取书名
-        index = self.Admin.User_7.text()  # 获取索引号
-        author = self.Admin.User_8.text()  # 获取作者
-        pubdate = self.Admin.Port_4.text()  # 获取出版时间
-        splitdate = pubdate.split('-')
-        timelen = 0.0
-        if len(index) == 0 and (len(name) == 0 or len(author) == 0 or len(pubdate) == 0):
-            # 至少要输入索引号进行查找
-            QMessageBox.warning(self.Admin, 'warning', '请补全图书信息！')
-            return
-        elif not len(index) == 0:
-            if not len(index) == 0:
-                if not index.isdigit():
-                    QMessageBox.warning(self.Admin, 'warning', '索引号格式错误！')
-                    return
-            if not len(pubdate) == 0:
-                if not len(splitdate) == 3:
-                    QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-                    return
-                elif splitdate[0].isdigit() and splitdate[1].isdigit() and splitdate[2].isdigit():
-                    if not int(splitdate[0]) in range(0, 2023) or not int(splitdate[1]) in range(1, 13) or not int(
-                            splitdate[2]) in range(1, 32):
-                        QMessageBox.warning(self.Admin, 'warning', '出版时间格式错误！')
-                        return
-            try:
-                searched_book = {'id': index, 'name': name, 'author': author, 'pubdate': pubdate}
-                print(searched_book)
-                # print(333)
-                # results = self.Lib_DB.search_book(searched_book)
-                # if len(results) == 0:
-                #     QMessageBox.warning(self.Admin, 'warning', '未查找到符合结果，请检查输入信息是否正确！')
-                st = time.time()
-                results = self.Lib_DB.search_book(searched_book)
-                timelen = time.time() - st
-                # print(timelen)
-                if len(results) == 0:
-                    QMessageBox.warning(self.Admin, 'warning',
-                                        '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
-                else:
-                    # 进入修改和删除页面
-                    self.Admin.stackedWidget.setCurrentIndex(7)
-                    self.Admin.lineEdit.setText(results[0][0])
-                    self.Admin.lineEdit_2.setText(str(results[0][1]))
-                    self.Admin.lineEdit_3.setText(results[0][2])
-                    if str(results[0][3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                        self.Admin.lineEdit_4.setText(str(results[0][3].strftime('%Y-%m-%d')).split("-")[0])
-                    else:
-                        self.Admin.lineEdit_4.setText(str(results[0][3].strftime('%Y-%m-%d')))
-                    self.Admin.User_9.setText(index)
-
-            except Exception as e:
-                QMessageBox.warning(self.Admin, 'warning',
-                                    '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
-                print(e)
 
     # 实现读者信息修改
     def modify_reader(self):
@@ -447,84 +310,6 @@ class MainWin(FramelessWindow, Ui_MainWin):  # 实现前后端功能对接
                 else:
                     QMessageBox.warning(self.Reader, '错误', '请检查学号和原密码是否正确！')
             except Exception as e:
-                print(e)
-
-    # 实现读者界面的书刊查找
-    def reader_find_book(self):
-        ui = self.Reader.readerSearchBook
-        name = ui.bookTitle.text()  # 获取书名
-        index = ui.bookIndex.text()  # 获取索引号
-        author = ui.bookAuthor.text()  # 获取作者
-        fardate = ui.publishYearStart.text()
-        neardate = ui.publishYearEnd.text()
-        timelen = 0.0
-        splitdate1 = fardate.split('-')
-        splitdate2 = neardate.split('-')
-
-        if len(name) == 0 and len(index) == 0 and len(author) == 0 and (len(fardate) == 0 and len(neardate) == 0):
-            QMessageBox.warning(self.Reader, 'warning', '请填写至少一栏信息！')
-            return
-        else:
-            if not len(index) == 0:
-                if not index.isdigit():
-                    QMessageBox.warning(self.Reader, 'warning', '索引号格式错误！')
-                    return
-            if len(index) == 0:
-                index = -1
-            if (len(fardate) == 0 and not len(neardate) == 0) or (not len(fardate) == 0 and len(neardate) == 0):
-                QMessageBox.warning(self.Reader, 'warning', '请补全出版时间范围！')
-            if not len(fardate) == 0 and not len(neardate) == 0:
-                if not len(splitdate1) == 3 or not len(splitdate2) == 3:
-                    QMessageBox.warning(self.Reader, 'warning', '出版时间格式错误！')
-                    return
-                elif splitdate1[0].isdigit() and splitdate1[1].isdigit() and splitdate1[2].isdigit() and splitdate2[
-                    0].isdigit() and splitdate2[1].isdigit() and splitdate2[2].isdigit():
-                    if not int(splitdate1[0]) in range(0, 2023) or not int(splitdate1[1]) in range(1, 13) or not int(
-                            splitdate1[2]) in range(1, 32) or not int(splitdate2[0]) in range(0, 2023) or not int(
-                        splitdate2[1]) in range(1, 13) or not int(splitdate2[2]) in range(1, 32):
-                        QMessageBox.warning(self.Reader, 'warning', '出版时间格式错误！')
-                        return
-                else:
-                    QMessageBox.warning(self.Reader, 'warning', '出版时间格式错误！')
-                    return
-            try:
-                searched_book = {'id': index, 'name': name, 'author': author, 'fardate': fardate, 'neardate': neardate}
-                print(searched_book)
-                # print(111)
-                # results = self.Lib_DB.reader_search_book(searched_book)
-                # if len(results) == 0:
-                #     QMessageBox.warning(self.Reader, 'warning', '未查找到符合结果，请检查输入信息是否正确！')
-                st = time.time()
-                results = self.Lib_DB.reader_search_book(searched_book)
-                timelen = time.time() - st
-                if len(results) == 0:
-                    QMessageBox.warning(self.Reader, 'warning',
-                                        '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
-                else:
-                    ui.bookList.clearContents()
-                    ui.bookList.setRowCount(0)
-                    for line in results:
-                        currentRowCount = ui.bookList.rowCount()
-                        ui.bookList.insertRow(currentRowCount)
-                        ui.bookList.setItem(currentRowCount, 0, QTableWidgetItem(line[0]))
-                        ui.bookList.setItem(currentRowCount, 1, QTableWidgetItem(line[2]))
-                        if str(line[3].strftime('%Y-%m-%d')).split("-", 1)[1] == '12-17':
-                            ui.bookList.setItem(currentRowCount, 2,
-                                                QTableWidgetItem(
-                                                    str(line[3].strftime('%Y-%m-%d')).split("-")[
-                                                        0]))
-                        else:
-                            ui.bookList.setItem(currentRowCount, 2,
-                                                QTableWidgetItem(
-                                                    str(line[3].strftime('%Y-%m-%d'))))
-                        ui.bookList.setItem(currentRowCount, 3,
-                                            QTableWidgetItem(str(line[1])))
-                        ui.bookList.setEditTriggers(QAbstractItemView.NoEditTriggers)
-                    QMessageBox.information(self.Reader, '通知',
-                                            '查询完毕！查询用时：%4f s' % timelen)
-            except Exception as e:
-                QMessageBox.warning(self.Reader, 'warning',
-                                    '未查找到符合结果，请检查输入信息是否正确！查询用时：%4f s' % timelen)
                 print(e)
 
     def delete_book(self):

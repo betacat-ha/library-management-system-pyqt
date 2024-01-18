@@ -2,19 +2,18 @@
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget, QHeaderView, QTableWidgetItem, QAbstractItemView
 from qfluentwidgets import FluentIcon, setFont, InfoBarIcon
-from Backend.Lib_DB import Database
 
 from Frontend.reader.Ui_ReaderBorrowReturn import Ui_ReaderBorrowReturn
 
 
 class ReaderBorrowReturn(Ui_ReaderBorrowReturn, QWidget):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, database=None):
         super().__init__(parent=parent)
         self.setupUi(self)
         self.bookList.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        self.Lib_DB = Database()
+        self.Lib_DB = database
 
     def refresh_rent_book_list(self, stu_id):
         results = self.Lib_DB.browse_rent(stu_id)
