@@ -113,7 +113,20 @@ background:rgba(255,255,255,200)}</string>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,4">
+           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,4,0">
+            <item>
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item>
              <widget class="QLabel" name="label">
               <property name="font">
@@ -123,7 +136,7 @@ background:rgba(255,255,255,200)}</string>
                </font>
               </property>
               <property name="text">
-               <string>欢迎使用图书论文管理系统</string>
+               <string>欢迎使用图书管理系统</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -237,6 +250,19 @@ background:rgba(255,255,255,200)}</string>
                </item>
               </layout>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
