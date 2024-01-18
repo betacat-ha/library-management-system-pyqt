@@ -1,5 +1,5 @@
 # 图书管理系统
-<img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux%20|%20macOS-blue?color=#4ec820" alt="Platform Win32 | Linux | macOS"><img src="https://img.shields.io/badge/License-MIT-blue?color=#4ec820" alt="MIT">
+<img src="https://img.shields.io/badge/Platform-Win32%20|%20Linux%20|%20macOS-blue?color=#4ec820" alt="Platform Win32 | Linux | macOS"><img src="https://img.shields.io/badge/License-MIT-blue?color=#4ec820" alt="MIT"><a href="https://wakatime.com/badge/user/dd052a23-1a65-4e6f-b05e-80bc93d8c93c/project/018d08c2-f7ba-4cbb-a0e0-93ea2e4dd506"><img src="https://wakatime.com/badge/user/dd052a23-1a65-4e6f-b05e-80bc93d8c93c/project/018d08c2-f7ba-4cbb-a0e0-93ea2e4dd506.svg" alt="wakatime"></a>
 
 本项目基于[WHU_DB 资料管理系统](https://github.com/JOETtheIV/WHU_DB)，重构了部分代码，并重新绘制了UI
 
