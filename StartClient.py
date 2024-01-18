@@ -36,17 +36,17 @@ class ReaderIn(SplitFluentWindow):
         self.readerSearchBook = ReaderSearchBook(self, database)
         self.readerBorrowReturn = ReaderBorrowReturn(self, database)
         self.readerInfoModify = ReaderInfoModify(self)
-        # self.myPage = MyPage(self)
+        self.myPage = MyPage(self)
 
         self.initNavigation()
         self.initWindow()
 
     def initNavigation(self):
         # add sub interface
+        self.addSubInterface(self.myPage, FluentIcon.HOME, '主页')
         self.addSubInterface(self.readerSearchBook, FluentIcon.SEARCH, '书刊查找')
         self.addSubInterface(self.readerBorrowReturn, FluentIcon.LIBRARY, '借书/还书')
         self.addSubInterface(self.readerInfoModify, FluentIcon.SETTING, '个人信息修改')
-        # self.addSubInterface(MyPage(self), FluentIcon.USER, '我的')
 
         self.navigationInterface.addItem(
             routeKey='settingInterface',
